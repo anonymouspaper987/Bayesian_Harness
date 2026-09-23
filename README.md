@@ -21,24 +21,10 @@ It models two separate properties for every note:
 - **Validity** — is the note still current?
 - **Quality** — how likely is the note to help?
 
-```mermaid
-flowchart LR
-    D[Library drift] --> N[Agent notes]
-    N --> H[Bayesian-Harness]
-    H --> V[Estimate validity]
-    H --> Q[Estimate quality]
-    V --> B{Budgeted action}
-    Q --> B
-    B -->|probe| P[Check note]
-    B -->|rewrite| R[Repair note]
-    P --> N
-    R --> N
-```
-
-> **Code is here; data lives next door.** The companion `bayesian_harness_datasets` repository contains 19 generated worlds and 157 masked API migrations.
+> **Code is here; data lives next door.** The companion [bayesian_harness_datasets](https://github.com/anonymouspaper987/bayesian_harness_datasets) repository contains 19 generated worlds and 157 masked API migrations.
 
 ```bash
-git clone https://github.com/<anon>/bayesian_harness_datasets data
+git clone https://github.com/anonymouspaper987/bayesian_harness_datasets data
 ```
 
 ## Quick start
