@@ -1,0 +1,9 @@
+# The harness itself needs no third-party package: it talks to an
+# OpenAI-compatible endpoint over urllib and runs snippets in subprocesses.
+#
+# Optional, per lane:
+google-genai>=1.0        # Gemini lane (Vertex AI); not needed for local models
+openpyxl>=3.1            # only for the optional manual-review recall check
+#
+# To serve open-weight models locally (any OpenAI-compatible server works):
+# vllm>=0.9

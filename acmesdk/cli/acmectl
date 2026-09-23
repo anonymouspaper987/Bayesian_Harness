@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""acmectl: 公司内部命令行工具 (acmesdk 的命令行外壳, Table C1 第三个知识领域).
+用法: acmectl <subsystem> <command> [positional-json ...] [--flag value ...]
+  每个参数都按 JSON 解析, 解析不了就当字符串. 输出是紧凑 JSON (键排序). 没有 --help 列表, 报错泛化 (黑箱).
+"""
+import importlib
+import json
+import sys
+
+
+def parse_value(s):
+    try:
+        return json.loads(s)
+    except Exception:
+        return s
+
+
+def parse_args(argv):
+    args, kwargs = [], {}
+    i = 0
+    while i < len(argv):
+        a = argv[i]
+        if a.startswith("--") and len(a) > 2:
+            key = a[2:]
+            if "=" in key:
+                key, val = key.split("=", 1)
+            else:
+                i += 1
+                val = argv[i] if i < len(argv) else ""
+            kwargs[key.replace("-", "_")] = parse_value(val)
+        else:
+            args.append(parse_value(a))
+        i += 1
+    return args, kwargs
+
+
+def render(out):
+    return json.dumps(out, sort_keys=True, separators=(",", ":"))
+
+
+def main():
+    argv = sys.argv[1:]
+    if len(argv) < 2:
+        print("acmectl: usage: acmectl <subsystem> <command> [args] [--flag value]", file=sys.stderr)
+        sys.exit(2)
+    sub, cmd = argv[0], argv[1]
+    try:
+        mod = importlib.import_module(f"acmesdk.{sub}")
+        fn = getattr(mod, cmd)
+    except Exception:
+        print("acmectl: unknown command", file=sys.stderr)
+        sys.exit(2)
+    args, kwargs = parse_args(argv[2:])
+    try:
+        out = fn(*args, **kwargs)
+    except Exception:
+        print("acmectl: command failed", file=sys.stderr)
+        sys.exit(1)
+    print(render(out))
+
+
+if __name__ == "__main__":
+    main()
