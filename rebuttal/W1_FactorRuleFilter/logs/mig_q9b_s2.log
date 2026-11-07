@@ -1,0 +1,14 @@
+掩码主实验: 157 题, 9 个换代季度 ['2025Q2', '2025Q3', '2025Q4', '2026Q1', '2026Q2', '2026Q3', '2026Q4', '2027Q1', '2027Q2'], 条件 ['factor_rule'], 维护 24/季
+== factor_rule
+  [factor_rule] 2025Q2: 5 题 0 解出, 已修复笔记 0, probes 0 repairs 0(ok 0), 30s
+  [factor_rule] 2025Q3: 5 题 2 解出, 已修复笔记 6, probes 6 repairs 6(ok 6), 28s
+  [factor_rule] 2025Q4: 9 题 4 解出, 已修复笔记 11, probes 9 repairs 5(ok 5), 30s
+  [factor_rule] 2026Q1: 9 题 4 解出, 已修复笔记 16, probes 9 repairs 5(ok 5), 33s
+  [factor_rule] 2026Q2: 3 题 1 解出, 已修复笔记 20, probes 12 repairs 4(ok 4), 30s
+  [factor_rule] 2026Q3: 38 题 1 解出, 已修复笔记 24, probes 12 repairs 4(ok 4), 59s
+  [factor_rule] 2026Q4: 34 题 7 解出, 已修复笔记 29, probes 6 repairs 6(ok 5), 45s
+  [factor_rule] 2027Q1: 33 题 7 解出, 已修复笔记 33, probes 9 repairs 5(ok 4), 89s
+  [factor_rule] 2027Q2: 21 题 3 解出, 已修复笔记 36, probes 12 repairs 4(ok 3), 92s
+
+条件               solved  probes  repairs rep_ok
+factor_rule       18.5%      75       39     36

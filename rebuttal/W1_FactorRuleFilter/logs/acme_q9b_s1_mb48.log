@@ -1,0 +1,41 @@
+模型后端: vllm Qwen/Qwen3.5-9B
+acmesdk 世界 seed1: 412 张笔记, 346 次考试 / 36 个月, 条件 ['factor_rule'], 维护 48/月
+== factor_rule
+  [factor_rule] M02: 6 题 3 解出, 有效笔记 408/412, probes 0 repairs 0(ok 0), 13s
+  [factor_rule] M03: 10 题 8 解出, 有效笔记 406/412, probes 36 repairs 4(ok 2), 22s
+  [factor_rule] M04: 10 题 5 解出, 有效笔记 392/412, probes 42 repairs 2(ok 0), 27s
+  [factor_rule] M05: 10 题 7 解出, 有效笔记 385/412, probes 27 repairs 7(ok 4), 42s
+  [factor_rule] M06: 10 题 3 解出, 有效笔记 385/412, probes 36 repairs 4(ok 2), 31s
+  [factor_rule] M07: 10 题 5 解出, 有效笔记 387/412, probes 27 repairs 7(ok 6), 29s
+  [factor_rule] M08: 10 题 3 解出, 有效笔记 373/412, probes 27 repairs 7(ok 3), 95s
+  [factor_rule] M09: 10 题 4 解出, 有效笔记 371/412, probes 30 repairs 6(ok 1), 33s
+  [factor_rule] M10: 10 题 8 解出, 有效笔记 365/412, probes 24 repairs 8(ok 6), 30s
+  [factor_rule] M11: 10 题 7 解出, 有效笔记 369/412, probes 30 repairs 6(ok 3), 27s
+  [factor_rule] M12: 10 题 8 解出, 有效笔记 370/412, probes 27 repairs 7(ok 2), 11s
+  [factor_rule] M13: 10 题 8 解出, 有效笔记 366/412, probes 27 repairs 7(ok 1), 26s
+  [factor_rule] M14: 10 题 8 解出, 有效笔记 366/412, probes 30 repairs 6(ok 1), 32s
+  [factor_rule] M15: 10 题 9 解出, 有效笔记 366/412, probes 30 repairs 6(ok 0), 19s
+  [factor_rule] M16: 10 题 6 解出, 有效笔记 364/412, probes 27 repairs 7(ok 2), 32s
+  [factor_rule] M17: 10 题 8 解出, 有效笔记 351/412, probes 27 repairs 7(ok 2), 46s
+  [factor_rule] M18: 10 题 4 解出, 有效笔记 350/412, probes 24 repairs 8(ok 3), 28s
+  [factor_rule] M19: 10 题 7 解出, 有效笔记 351/412, probes 24 repairs 8(ok 0), 95s
+  [factor_rule] M20: 10 题 6 解出, 有效笔记 349/412, probes 30 repairs 6(ok 1), 23s
+  [factor_rule] M21: 10 题 7 解出, 有效笔记 348/412, probes 27 repairs 7(ok 1), 22s
+  [factor_rule] M22: 10 题 6 解出, 有效笔记 332/412, probes 24 repairs 8(ok 0), 89s
+  [factor_rule] M23: 10 题 7 解出, 有效笔记 276/412, probes 18 repairs 10(ok 3), 22s
+  [factor_rule] M24: 10 题 3 解出, 有效笔记 278/412, probes 21 repairs 9(ok 2), 82s
+  [factor_rule] M25: 10 题 6 解出, 有效笔记 276/412, probes 21 repairs 9(ok 6), 27s
+  [factor_rule] M26: 10 题 7 解出, 有效笔记 279/412, probes 27 repairs 7(ok 0), 20s
+  [factor_rule] M27: 10 题 6 解出, 有效笔记 277/412, probes 24 repairs 8(ok 2), 35s
+  [factor_rule] M28: 10 题 7 解出, 有效笔记 269/412, probes 27 repairs 7(ok 0), 76s
+  [factor_rule] M29: 10 题 3 解出, 有效笔记 268/412, probes 24 repairs 8(ok 3), 18s
+  [factor_rule] M30: 10 题 5 解出, 有效笔记 270/412, probes 27 repairs 7(ok 0), 49s
+  [factor_rule] M31: 10 题 5 解出, 有效笔记 238/412, probes 24 repairs 8(ok 2), 52s
+  [factor_rule] M32: 10 题 6 解出, 有效笔记 230/412, probes 24 repairs 8(ok 2), 23s
+  [factor_rule] M33: 10 题 2 解出, 有效笔记 231/412, probes 30 repairs 6(ok 0), 28s
+  [factor_rule] M34: 10 题 4 解出, 有效笔记 230/412, probes 27 repairs 7(ok 0), 17s
+  [factor_rule] M35: 10 题 8 解出, 有效笔记 229/412, probes 21 repairs 9(ok 3), 23s
+  [factor_rule] M36: 10 题 6 解出, 有效笔记 231/412, probes 24 repairs 8(ok 1), 20s
+
+条件               solved  probes  repairs rep_ok
+factor_rule       59.2%     915      239      0
