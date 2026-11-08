@@ -8,10 +8,10 @@
 
 **Response:** Thank you for the question. After a failed repair:
 
-- **The note** keeps its old text and is still shown to the agent in exams.
-- **Its staleness belief** is reset to zero, and the note leaves the queue of known broken notes.
-- **Its quality counts** do not change, because a failed repair says nothing about how useful the note is.
-- **Retry suppression** is not separate. It comes from the same reset. If the note is still broken, its next failed exams raise the staleness again. We will state this clearly in the revision.
+- **First**, the note stays the same. The agent still sees the old note in its exams.
+- **Then**, we set its staleness to zero, so we stop treating it as broken for now.
+- **At the same time**, its quality counts stay the same. A failed fix does not tell us whether the note is good or bad.
+- **Finally**, there is no separate rule that stops retries. The reset does this job. If the note is still broken, it fails more exams, its staleness goes up again, and we try to fix it later. We will make this clear in the paper.
 
 Keeping the note as broken and retrying it every period does worse.
 
