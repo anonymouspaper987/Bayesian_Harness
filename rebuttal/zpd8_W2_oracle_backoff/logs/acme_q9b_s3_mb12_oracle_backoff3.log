@@ -1,0 +1,41 @@
+模型后端: vllm Qwen/Qwen3.5-9B
+acmesdk 世界 seed3: 414 张笔记, 330 次考试 / 36 个月, 条件 ['oracle'], 维护 12/月
+== oracle
+  [oracle] M02: 3 题 2 解出, 有效笔记 412/414, probes 0 repairs 2(ok 1), 5s
+  [oracle] M03: 5 题 5 解出, 有效笔记 411/414, probes 0 repairs 2(ok 2), 26s
+  [oracle] M04: 5 题 5 解出, 有效笔记 413/414, probes 0 repairs 0(ok 0), 6s
+  [oracle] M05: 7 题 4 解出, 有效笔记 412/414, probes 0 repairs 1(ok 0), 19s
+  [oracle] M06: 10 题 6 解出, 有效笔记 408/414, probes 0 repairs 4(ok 2), 23s
+  [oracle] M07: 10 题 8 解出, 有效笔记 407/414, probes 0 repairs 4(ok 3), 20s
+  [oracle] M08: 10 题 5 解出, 有效笔记 390/414, probes 0 repairs 4(ok 4), 23s
+  [oracle] M09: 10 题 6 解出, 有效笔记 394/414, probes 0 repairs 4(ok 1), 21s
+  [oracle] M10: 10 题 8 解出, 有效笔记 393/414, probes 0 repairs 4(ok 2), 23s
+  [oracle] M11: 10 题 9 解出, 有效笔记 393/414, probes 0 repairs 4(ok 4), 15s
+  [oracle] M12: 10 题 6 解出, 有效笔记 393/414, probes 0 repairs 4(ok 2), 23s
+  [oracle] M13: 10 题 6 解出, 有效笔记 324/414, probes 0 repairs 4(ok 3), 105s
+  [oracle] M14: 10 题 4 解出, 有效笔记 308/414, probes 0 repairs 4(ok 0), 80s
+  [oracle] M15: 10 题 5 解出, 有效笔记 305/414, probes 0 repairs 4(ok 3), 21s
+  [oracle] M16: 10 题 6 解出, 有效笔记 305/414, probes 0 repairs 4(ok 2), 22s
+  [oracle] M17: 10 题 9 解出, 有效笔记 304/414, probes 0 repairs 4(ok 3), 33s
+  [oracle] M18: 10 题 9 解出, 有效笔记 304/414, probes 0 repairs 4(ok 0), 19s
+  [oracle] M19: 10 题 4 解出, 有效笔记 289/414, probes 0 repairs 4(ok 3), 36s
+  [oracle] M20: 10 题 4 解出, 有效笔记 289/414, probes 0 repairs 4(ok 2), 22s
+  [oracle] M21: 10 题 7 解出, 有效笔记 291/414, probes 0 repairs 4(ok 3), 38s
+  [oracle] M22: 10 题 4 解出, 有效笔记 292/414, probes 0 repairs 4(ok 0), 26s
+  [oracle] M23: 10 题 5 解出, 有效笔记 291/414, probes 0 repairs 4(ok 0), 54s
+  [oracle] M24: 10 题 5 解出, 有效笔记 290/414, probes 0 repairs 4(ok 2), 26s
+  [oracle] M25: 10 题 2 解出, 有效笔记 290/414, probes 0 repairs 4(ok 2), 114s
+  [oracle] M26: 10 题 8 解出, 有效笔记 272/414, probes 0 repairs 4(ok 1), 33s
+  [oracle] M27: 10 题 3 解出, 有效笔记 272/414, probes 0 repairs 4(ok 0), 32s
+  [oracle] M28: 10 题 5 解出, 有效笔记 262/414, probes 0 repairs 4(ok 0), 22s
+  [oracle] M29: 10 题 6 解出, 有效笔记 259/414, probes 0 repairs 4(ok 2), 32s
+  [oracle] M30: 10 题 5 解出, 有效笔记 260/414, probes 0 repairs 4(ok 1), 20s
+  [oracle] M31: 10 题 7 解出, 有效笔记 252/414, probes 0 repairs 4(ok 0), 83s
+  [oracle] M32: 10 题 5 解出, 有效笔记 250/414, probes 0 repairs 4(ok 1), 23s
+  [oracle] M33: 10 题 5 解出, 有效笔记 249/414, probes 0 repairs 4(ok 0), 47s
+  [oracle] M34: 10 题 7 解出, 有效笔记 236/414, probes 0 repairs 4(ok 0), 25s
+  [oracle] M35: 10 题 6 解出, 有效笔记 235/414, probes 0 repairs 4(ok 0), 28s
+  [oracle] M36: 10 题 5 解出, 有效笔记 235/414, probes 0 repairs 4(ok 1), 29s
+
+条件               solved  probes  repairs rep_ok
+oracle            59.4%       0      129      0

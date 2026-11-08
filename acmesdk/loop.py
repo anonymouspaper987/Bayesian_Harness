@@ -575,6 +575,7 @@ def run_condition(W, cond, a):
     known_broken, ledger = set(), []
     retired = set()                      # 丢弃动作: 质量太低的过期笔记不再修, 也不再注入考试
     cheap_set = getattr(a, "_cheap_set", set())
+    repair_failed_at = {}                       # reviewer zpd8 W2: note -> month of its last failed repair (--oracle-backoff)
     last_repair, repaired_month = {}, {}        # 笔记 -> 最近一次修复是 cheap/full; 笔记 -> 最近修好的月份
     broke_at, caught_set = {}, set()            # 断裂事件: 笔记 -> 最近一次失效的月份; 一个周期内被探出的 (笔记, 月)
     valid_after = {}                            # 上月维护结束后笔记是否有效 (用来判定新的断裂)
@@ -684,6 +685,8 @@ def run_condition(W, cond, a):
                     llm_fixed.append((k, old_snip, new["snippet"]))
                     for g in groups.get(k, set()):
                         demo_store.setdefault(g, []).append((m, (old_snip, new["snippet"])))
+                else:
+                    repair_failed_at[k] = m
                 if flt is not None:
                     flt.on_repair(k, m)
 
@@ -776,7 +779,10 @@ def run_condition(W, cond, a):
                         break
                     left -= a.repair_cost; rw_sel.append(k)
             if cond == "oracle":
-                broken = sorted([k for k in ids if not pre[k]], key=lambda k: -use_count[k])
+                broken = sorted([k for k in ids if not pre[k]
+                                 and not (a.oracle_backoff > 0 and k in repair_failed_at
+                                          and m - repair_failed_at[k] <= a.oracle_backoff)],
+                                key=lambda k: -use_count[k])   # --oracle-backoff N: skip notes whose repair failed in the last N months
                 sel_r = []
                 for k in broken:
                     if try_mech(k):
@@ -969,6 +975,9 @@ def main():
                     help="1 = 过期队列空了以后, 剩余预算按估计质量从低到高 (乘使用量) 对有效笔记做完整重写 (Table 4 最后一行)")
     ap.add_argument("--surface", default="py", choices=["py", "cli"],
                     help="知识表面: py = acmesdk Python API 笔记 (默认); cli = acmectl 命令行用法笔记 (C1, 读 *_cli 文件)")
+    ap.add_argument("--oracle-backoff", type=int, default=0,
+                    help="reviewer zpd8 W2: the Oracle does not retry a note for N months after a failed repair "
+                         "(0 = paper default, retry every month)")
     ap.add_argument("--world-suffix", default="",
                     help="变体世界目录后缀 (等价于 ACME_WORLD_SUFFIX 环境变量)")
     a = ap.parse_args()

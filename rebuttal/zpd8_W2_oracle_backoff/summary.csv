@@ -1,0 +1,10 @@
+model,policy,pass_rate_pooled,sd_over_seeds
+q4b,oracle,32.6,4.2
+q9b,oracle,40.4,6.1
+q27b,oracle,69.3,3.0
+q4b,oracle_backoff3,46.1,1.6
+q9b,oracle_backoff3,55.0,4.5
+q27b,oracle_backoff3,73.8,3.2
+q4b,ours,35.1,4.1
+q9b,ours,46.6,4.2
+q27b,ours,70.9,2.2
