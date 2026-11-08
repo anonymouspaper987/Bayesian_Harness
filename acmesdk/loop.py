@@ -685,7 +685,14 @@ def run_condition(W, cond, a):
                     for g in groups.get(k, set()):
                         demo_store.setdefault(g, []).append((m, (old_snip, new["snippet"])))
                 if flt is not None:
-                    flt.on_repair(k, m)
+                    if new is None and a.keep_stale_on_failed_repair:
+                        # Reviewer zpd8 Q1 variant: a failed repair leaves the note broken, so record it
+                        # as an invalid observation and put it back in the known-broken queue; it is
+                        # retried next period (like the Oracle) without spending another probe.
+                        flt.observe_probe(k, False, m)
+                        known_broken.add(k)
+                    else:
+                        flt.on_repair(k, m)         # paper default: reset after any repair attempt
 
 
             def propagate(k, old_snip, new_snip):
@@ -969,6 +976,9 @@ def main():
                     help="1 = 过期队列空了以后, 剩余预算按估计质量从低到高 (乘使用量) 对有效笔记做完整重写 (Table 4 最后一行)")
     ap.add_argument("--surface", default="py", choices=["py", "cli"],
                     help="知识表面: py = acmesdk Python API 笔记 (默认); cli = acmectl 命令行用法笔记 (C1, 读 *_cli 文件)")
+    ap.add_argument("--keep-stale-on-failed-repair", type=int, default=0,
+                    help="reviewer zpd8 Q1: 1 = after a failed repair keep the note marked broken and retry it "
+                         "next period (0 = paper default, reset after any attempt)")
     ap.add_argument("--world-suffix", default="",
                     help="变体世界目录后缀 (等价于 ACME_WORLD_SUFFIX 环境变量)")
     a = ap.parse_args()

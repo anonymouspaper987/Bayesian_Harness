@@ -1,0 +1,7 @@
+model,variant,pass_rate_pooled,sd_over_seeds,probes_per_run,repairs_per_run
+q4b,reset,35.1,4.1,200,73
+q4b,keep_and_retry,25.9,3.3,48,124
+q9b,reset,46.6,4.2,190,77
+q9b,keep_and_retry,37.8,3.1,51,123
+q27b,reset,70.9,2.2,190,73
+q27b,keep_and_retry,68.5,1.8,109,101
