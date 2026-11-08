@@ -8,7 +8,7 @@
 
 **Response:** Thank you for the helpful suggestions.
 
-On Bayesian-Agent, [BA26] conditions its posterior on `[features used in BA26]`. Our notes carry no such features, so we keep its core, one Beta posterior per note. The two-counter policy can be seen as a stronger version of it that adds a time clock.
+On Bayesian-Agent, [BA26] conditions its posterior on [features used in BA26]. Our notes carry no such features, so we have to keep one Beta posterior per note. The two-counter policy can be seen as a stronger version of it that adds a time clock.
 
 Following your suggestion, we ran the two-counter policy under the main-table protocol of MaskedMig.
 
