@@ -6,16 +6,19 @@
 > **Q1:** After a failed repair, what happens to the note, its staleness belief, and its quality counts? Is retry suppression separate from the belief update?
 
 
-**Response:** Thank you for pointing this out. You are right that the staleness is reset after a failed repair. Strictly speaking,  we treat this a decision rule rather than a belief update on purpose. We also agree your opinion that we should separate the belief update. We considered that a note the model could not fix is likely to fail again, so retrying it every period wastes the budget. 
+**Response:** Thank you for the question. After a failed repair:
 
-We also ran a variant that keeps the note marked as broken and retries it every period.
+- **The note** keeps its old text and is still shown to the agent in exams.
+- **Its staleness belief** is reset to zero, and the note leaves the queue of known broken notes.
+- **Its quality counts** do not change, because a failed repair says nothing about how useful the note is.
+- **Retry suppression** is not separate. It comes from the same reset. If the note is still broken, its next failed exams raise the staleness again. We will state this clearly in the revision.
+
+Keeping the note as broken and retrying it every period does worse.
 
 > | (AcmeSDK, budget 12, 3 seeds) | Qwen3.5-4B | Qwen3.5-9B | Qwen3.5-27B |
 > | :--- | :---: | :---: | :---: |
 > | Reset after a failed repair (ours) | `35.1 ± 4.1` | `46.6 ± 4.2` | `70.9 ± 2.2` |
 > | Keep as broken and retry | `25.9 ± 3.3` | `37.8 ± 3.1` | `68.5 ± 1.8` |
-
-We will explicitly explain this in our manuscript and make a comprison.
 
 <p align="center"><img src="rebuttal/zpd8_Q1_failed_repair/q1_failed_repair.gif" alt="Reset vs keep-and-retry after a failed repair" width="900"></p>
 
