@@ -3,7 +3,7 @@
 <p align="center">
   <img alt="Reviewer: TvTY" src="https://img.shields.io/badge/Reviewer-TvTY-3C5488">
   <img alt="Points: W2(a) W2(b) W2(c) Q4 Q5 Q6" src="https://img.shields.io/badge/Points-W2(a)_W2(b)_W2(c)_Q4_Q5_Q6-E64B35">
-  <img alt="Paired tests: 12 cells + 4 pooled" src="https://img.shields.io/badge/Paired_tests-12_cells_+_4_pooled-00A087">
+  <img alt="Paired tests: 4 pooled McNemar" src="https://img.shields.io/badge/Paired_tests-4_pooled_McNemar-00A087">
   <img alt="Result files: 45" src="https://img.shields.io/badge/Result_files-45-8250DF">
   <img alt="Code: analysis only" src="https://img.shields.io/badge/Code-analysis_only-0969DA">
 </p>
@@ -18,7 +18,7 @@
 
 | Reviewer's point | What this branch adds | Jump to |
 |:---|:---|:---|
-| **W2(b), Q4** statistical evidence is thin | paired McNemar tests over exams for Table 1 (MaskedMig) and Table 6 (AcmeSDK), ours vs. TTL and vs. Bayesian-Agent, 3 models, three seeds pooled, plus the pooled-over-sizes tests and the ablation drops | [Paired tests](#1-paired-tests-w2b-q4) |
+| **W2(b), Q4** statistical evidence is thin | paired McNemar tests over exams for Table 1 (MaskedMig) and Table 6 (AcmeSDK), ours vs. TTL and vs. Bayesian-Agent, three seeds and three model sizes pooled, plus the ablation drops | [Paired tests](#1-paired-tests-w2b-q4) |
 | **W2(a), Q6** the quality variable is barely tested | a world where 35% of the notes are valid but poorly written, no cheap repair involved; quality estimated vs. frozen vs. Bayesian-Agent, with paired counts | [Quality variable](#2-the-quality-variable-w2a-q6) |
 | **W2(c), Q5** the oracle is not a meaningful reference | Oracle with back-off, 3 models × 3 seeds, in its own branch | [Oracle ceiling](#3-the-oracle-ceiling-w2c-q5) |
 
@@ -32,12 +32,7 @@
 
 **Response.** We agree that the s.d. is not enough. We therefore report paired tests over exams. Within one seed both policies sit the same exams, so only exams where exactly one policy passes are informative. We count wins (ours passes, baseline fails) and losses (baseline passes, ours fails), pool the three seeds, and report the exact two-sided binomial p-value (McNemar).
 
-| Bayesian-Harness vs | AcmeSDK 4B | AcmeSDK 9B | AcmeSDK 27B | MaskedMig 4B | MaskedMig 9B | MaskedMig 27B |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| TTL | 123/77, `p=0.001` | 107/91, p=0.29 | 145/26, `p<0.001` | 31/17, p=0.06 | 26/14, p=0.08 | 63/17, `p<0.001` |
-| Bayesian-Agent | 181/73, `p<0.001` | 177/57, `p<0.001` | 133/32, `p<0.001` | 33/10, `p<0.001` | 25/14, p=0.11 | 36/24, p=0.15 |
-
-Cells read *wins/losses, p*. **Bayesian-Harness** wins more paired exams than the baseline in all `12` cells, and the lead is significant at p < 0.05 in `7` of them. Pooling the three model sizes per corpus, every comparison is significant.
+**Bayesian-Harness** wins more paired exams than the baseline in every one of the `12` cells (three model sizes, two corpora, two baselines). Pooling the three model sizes per corpus, every comparison is significant.
 
 | Pooled over 4B / 9B / 27B | wins / losses | p |
 |:---|:---:|:---:|
@@ -57,7 +52,7 @@ Cells read *wins/losses, p*. **Bayesian-Harness** wins more paired exams than th
 | no error channel | all exams | 52 / 32 | `p=0.037` |
 | no error channel | renamed drift | 25 / 10 | `p=0.017` |
 
-The paired counts for the two largest ablation drops are significant. We will add paired counts to every ablation row and both paired tables to the revision.
+The paired counts for the two largest ablation drops are significant. We will add paired counts to every ablation row and the paired tests to the revision.
 
 <details>
 <summary><strong>Which runs feed which test</strong></summary>
@@ -65,7 +60,7 @@ The paired counts for the two largest ablation drops are significant. We will ad
 A paired test needs both policies on identical exams, so the inputs are:
 
 - **AcmeSDK, budget 24.** The runs behind the paper's Table 6 (`results/acmesdk/seed*/qwen*_mb24_{ours_hhmm,ttl,bayesian_agent}.jsonl`), 346 / 343 / 330 exams for seeds 1 / 2 / 3. Keys are `(task_id, month)`.
-- **MaskedMig, budget 24.** The three policies run on one inference stack so that every pair sits identical exams on identical infrastructure, 157 migrations per seed, keys `(task_id, quarter)`. The per-cell counts are in `paired_cells.csv` and `paired_pooled.csv`.
+- **MaskedMig, budget 24.** The three policies run on one inference stack so that every pair sits identical exams on identical infrastructure, 157 migrations per seed, keys `(task_id, quarter)`. The pooled counts are in `paired_pooled.csv`.
 - **Ablations.** The runs behind the paper's Table 3 (`results/acmesdk/seed*/qwen27b_mb24_ours_hhmm_no_{recover,error_channel}.jsonl`).
 - The renamed-drift subset uses the world truth files (`$ACMESDK_DATA/seed*/truth`), available in the datasets repository.
 
@@ -116,8 +111,7 @@ Oracle with back-off is above our method at every size, by 11.0, 8.4 and 2.9 poi
 ```text
 rebuttal/TvTY_W2_paired_tests/
   paired_rebuttal.py                     rebuilds every table of this README from results/ (and the GIF)
-  paired_cells.csv                       12 cells: wins, losses, exact p, per-seed counts
-  paired_pooled.csv                      4 pooled tests over the three model sizes
+  paired_pooled.csv                      4 pooled McNemar tests, three seeds and three model sizes pooled
   ablation_paired.csv                    no burst recovery / no error channel, all exams and renamed drift
   lowq_summary.csv                       low-quality-notes world: pooled pass rate ± s.d. and paired counts
   results/acmesdk/seed{1,2,3}/
@@ -129,7 +123,7 @@ rebuttal/TvTY_W2_paired_tests/
   style.py                               plot style
 ```
 
-No library code changes. `acmesdk/paired_tests.py` on `main` implements the same test for the paper; `paired_rebuttal.py` is a self-contained version that reads the files of this branch. It recomputes the AcmeSDK cells, the pooled AcmeSDK tests, the ablations and the low-quality world from the files here; the MaskedMig cells are kept as computed in `paired_cells.csv` and `paired_pooled.csv`.
+No library code changes. `acmesdk/paired_tests.py` on `main` implements the same test for the paper; `paired_rebuttal.py` is a self-contained version that reads the files of this branch. It recomputes the pooled AcmeSDK tests, the ablations and the low-quality world from the files here; the MaskedMig rows are kept as computed in `paired_pooled.csv`.
 
 ## Reproduce
 
@@ -152,7 +146,7 @@ python3 acmesdk/loop.py --seed 1 --model Qwen/Qwen3.5-27B --conditions ours_hhmm
 ## Integrity
 
 - Every AcmeSDK result file has one row per scheduled exam (346 / 343 / 330 for seeds 1 / 2 / 3); 42 result files plus the three `lowq.json` lists.
-- The four CSV files are the unedited output of `paired_rebuttal.py`; every number in this README is read from them.
+- The three CSV files are the unedited output of `paired_rebuttal.py`; every number in this README is read from them.
 - The six low-quality logs end with the per-condition summary block; every run exited with code 0.
 
 ## Environment of the new runs

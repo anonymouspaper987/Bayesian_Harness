@@ -9,7 +9,7 @@ losses (baseline passes, ours fails), pool the three seeds, and report the exact
   results/acmesdk/seed{1,2,3}/qwen27b_mb24_ours_hhmm_no_{recover,error_channel}.jsonl         ablations (paper runs)
   results/acmesdk/seed{1,2,3}/qwen27b_mb12_lowq035_*.jsonl                                   low-quality-notes world (W2(a) / Q6)
 
-Writes paired_cells.csv, paired_pooled.csv, ablation_paired.csv, lowq_summary.csv and w2_paired_tests.gif.
+Writes paired_pooled.csv (three seeds and three model sizes pooled), ablation_paired.csv, lowq_summary.csv and w2_paired_tests.gif.
 The renamed-drift subset needs the world truth files ($ACMESDK_DATA/seed*/truth); without them that
 column is reported as "n/a".
 
@@ -94,10 +94,7 @@ for corpus, name in CORPORA:
             W, L, p, per = compare(fa, fb, corpus)
             cells[name, mname, bname] = (W, L, p)
             rows.append([name, mname, bname, W, L, f"{p:.4g}", " ".join(f"s{s}:{w}/{l}" for s, w, l in per)])
-OUT_SUFFIX = "" if len(CORPORA) == 2 else "_acmesdk"      # never overwrite the full tables with a partial recomputation
-with open(f"{HERE}/paired_cells{OUT_SUFFIX}.csv", "w", newline="") as f:
-    csv.writer(f).writerows(rows)
-
+OUT_SUFFIX = "" if len(CORPORA) == 2 else "_acmesdk"      # never overwrite the full table with a partial recomputation
 pooled = [["corpus", "baseline", "wins", "losses", "p_two_sided"]]
 for name in [n for _, n in CORPORA]:
     for _, bname in BASES:
@@ -140,7 +137,7 @@ for cond, label in LQ:
 with open(f"{HERE}/lowq_summary.csv", "w", newline="") as f:
     csv.writer(f).writerows(lowq)
 
-for name, out in ((f"paired_cells{OUT_SUFFIX}.csv", rows), (f"paired_pooled{OUT_SUFFIX}.csv", pooled), ("ablation_paired.csv", abl), ("lowq_summary.csv", lowq)):
+for name, out in ((f"paired_pooled{OUT_SUFFIX}.csv", pooled), ("ablation_paired.csv", abl), ("lowq_summary.csv", lowq)):
     print(f"== {name}")
     for r in out:
         print(",".join(map(str, r)))
@@ -160,30 +157,29 @@ if len(CORPORA) < 2:
     print("GIF needs both corpora; the committed w2_paired_tests.gif was drawn from the full tables"); sys.exit(0)
 GROW, HOLD, W = 20, 32, 0.19
 fig, axes = plt.subplots(1, 2, figsize=(13, 5.6), facecolor="white", gridspec_kw={"width_ratios": [1, 1]})
-fig.subplots_adjust(left=0.065, right=0.99, top=0.80, bottom=0.10, wspace=0.14)
+fig.subplots_adjust(left=0.065, right=0.99, top=0.80, bottom=0.12, wspace=0.14)
 ease = lambda x: 1 - (1 - max(0.0, min(1.0, x))) ** 3
-GROUPS = [(m, b) for _, m in MODELS for _, b in BASES]       # 6 groups per corpus
+POOL = {(r[0], r[1]): (int(r[2]), int(r[3]), float(r[4])) for r in pooled[1:]}
 
 
 def draw(i):
     f = ease(i / GROW)
-    for ax, name, ymax in ((axes[0], "AcmeSDK", 205), (axes[1], "MaskedMig", 75)):
-        ax.clear(); ax.set_ylim(0, ymax); ax.set_xlim(-0.6, len(GROUPS) - 0.4)
-        ax.set_xticks(range(len(GROUPS)), [f"{m.replace('Qwen3.5-', '')}\nvs {b.replace('Bayesian-Agent', 'B-Agent')}" for m, b in GROUPS], fontsize=11)
+    for ax, name, ymax in ((axes[0], "AcmeSDK", 560), (axes[1], "MaskedMig", 145)):
+        ax.clear(); ax.set_ylim(0, ymax); ax.set_xlim(-0.6, len(BASES) - 0.4)
+        ax.set_xticks(range(len(BASES)), [f"vs {b}" for _, b in BASES], fontsize=13)
         ax.tick_params(axis="y", labelsize=12); ax.yaxis.grid(True, color="#e5e5e5", lw=0.7); ax.set_axisbelow(True)
-        ax.set_title(f"{name}, budget 24, three seeds pooled", fontsize=14, pad=8)
-        for g, (m, b) in enumerate(GROUPS):
-            Wn, Ln, p = cells[name, m, b]
+        ax.set_title(f"{name}, budget 24, three seeds and three model sizes pooled", fontsize=13.5, pad=8)
+        for g, (_, b) in enumerate(BASES):
+            Wn, Ln, p = POOL[name, b]
             ax.bar(g - W / 2 - 0.01, Wn * f, W, color=NAVY, label="exams only Bayesian-Harness passes" if g == 0 else None)
             ax.bar(g + W / 2 + 0.01, Ln * f, W, color=GRAY2, label="exams only the baseline passes" if g == 0 else None)
             if f >= 0.999:
-                ax.text(g - W / 2 - 0.01, Wn + ymax * 0.012, str(Wn), ha="center", fontsize=11, color=NAVY, fontweight="bold")
-                ax.text(g + W / 2 + 0.01, Ln + ymax * 0.012, str(Ln), ha="center", fontsize=11, color=MUTE)
-                ax.text(g, max(Wn, Ln) + ymax * 0.075, fmt_p(p), ha="center", fontsize=10.5,
-                        color=BRICK if p < 0.05 else MUTE, fontweight="bold" if p < 0.05 else "normal")
+                ax.text(g - W / 2 - 0.01, Wn + ymax * 0.012, str(Wn), ha="center", fontsize=12, color=NAVY, fontweight="bold")
+                ax.text(g + W / 2 + 0.01, Ln + ymax * 0.012, str(Ln), ha="center", fontsize=12, color=MUTE)
+                ax.text(g, max(Wn, Ln) + ymax * 0.075, fmt_p(p), ha="center", fontsize=12, color=BRICK, fontweight="bold")
     axes[0].set_ylabel("Discordant exams (count)", fontsize=13)
     axes[0].legend(loc="upper left", ncol=2, frameon=False, fontsize=12, bbox_to_anchor=(-0.02, 1.22))
-    fig.suptitle("Paired McNemar tests: Bayesian-Harness vs. TTL and Bayesian-Agent, exact two-sided p (red = p < 0.05)",
+    fig.suptitle("Paired McNemar tests: Bayesian-Harness vs. TTL and Bayesian-Agent, exact two-sided p",
                  fontsize=14.5, y=0.985)
     return []
 
