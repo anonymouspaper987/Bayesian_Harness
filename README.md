@@ -4,7 +4,6 @@
   <img alt="Reviewer: TvTY" src="https://img.shields.io/badge/Reviewer-TvTY-3C5488">
   <img alt="Points: W1(a) W1(b) W1(c) Q1 Q2 Q3" src="https://img.shields.io/badge/Points-W1(a)_W1(b)_W1(c)_Q1_Q2_Q3-E64B35">
   <img alt="New policy: release_aware" src="https://img.shields.io/badge/New_policy-release__aware-00A087">
-  <img alt="Run logs: 18" src="https://img.shields.io/badge/Run_logs-18-8250DF">
   <img alt="Result files: 36" src="https://img.shields.io/badge/Result_files-36-8250DF">
   <img alt="Code: +78 lines" src="https://img.shields.io/badge/Code-+78_lines-0969DA">
 </p>
@@ -12,7 +11,7 @@
 > [!NOTE]
 > **Branch for Reviewer TvTY, weakness 1 and questions 1 to 3.** It adds the release-aware baseline the reviewer asked for
 > (`release_aware`: probe what the version bump or the changelog points at), run under both main-table protocols with
-> every log and result row; the sensitivity sweep on the reviewer's own grid of ρ, µ, ε; and the real-repository
+> every result row; the sensitivity sweep on the reviewer's own grid of ρ, µ, ε; and the real-repository
 > calibration figures behind the generator constants. The two stronger non-Bayesian baselines of W1(c) live in their
 > own branches and are linked below.
 
@@ -144,9 +143,6 @@ acmesdk/loop.py                                     changelog hook: flag notes n
 maskedmig/masked_loop.py                            version hook: flag notes of libraries that turned over (+9 lines)
 scripts/run_release_aware.sh                        both corpora, one model, three seeds
 rebuttal/TvTY_W1_release_signal/
-  logs/acme_q{4b,9b,27b}_s{1,2,3}_mb24.log          9 AcmeSDK lanes, one line per month
-  logs/mig_q{4b,9b,27b}_s{1,2,3}.log                9 MaskedMig lanes, one line per quarter
-  logs/run.log                                      launcher timeline of the whole job
   results/acmesdk/seed{1,2,3}/tq1_qwen*_mb24_release_aware.jsonl          one row per exam
   results/acmesdk/seed{1,2,3}/tq1_qwen*_mb24_release_aware.maint.jsonl    one row per month (probes, repairs, release_flagged)
   results/maskedmig/tq1_q*_s*_mb24_release_aware.jsonl                    one row per migration
@@ -206,19 +202,17 @@ python3 rebuttal/TvTY_W1_release_signal/sweep_grid.py 20
 python3 rebuttal/TvTY_W1_release_signal/make_figures.py
 ```
 
-## Reading the logs
+## Reading the result files
 
-One line per period, for example `[release_aware] M07: 10 题 9 解出, 有效笔记 405/412, probes 4 repairs 2(ok 2), 21s`
-reads: month 7, 10 exams, 9 passed, 405 of 412 notes currently valid, 4 probes and 2 repairs of which 2 passed verification.
-MaskedMig lines carry the quarter (`2025Q3`) and the number of notes repaired so far. The final block of every log is the
-per-condition summary. The lanes also carry a same-stack rerun of `ours_hhmm`, launched in the same process so the baseline
-and our method shared one server and one world copy.
+`*.jsonl` has one JSON object per exam (`task_id`, period, `solved`, the note that was injected, the error text if any).
+`*.maint.jsonl` has one object per period with the maintenance counters: `probes`, `probe_valid`, `repairs`, `repair_ok`,
+`budget_spent`, and `release_flagged`, the number of notes the release signal pointed at in that period.
 
 ## Integrity
 
 - AcmeSDK result files have one row per scheduled exam: 346 / 343 / 330 rows for seeds 1 / 2 / 3, 1019 per model. Every MaskedMig file has 157 rows. 4470 result rows in total.
 - `summary.csv` is recomputed from these rows by `make_figures.py`; the table above is read from it.
-- `logs/run.log` is the unedited launcher timeline: 27B from 09:26 to 10:29, 4B to 10:59, 9B to 11:32, every lane exit code 0.
+- All 18 runs completed in one job (27B, then 4B, then 9B), every run with exit code 0.
 
 ## Environment of the new runs
 
