@@ -506,6 +506,45 @@ class TTLFilter(BaseFilter):
         self.last_success[k] = t
 
 
+class ReleaseAwareFilter(TTLFilter):
+    """Release-aware baseline (Reviewer TvTY, W1(b) / Q1).
+
+    TTL plus the public release signal. At the start of every period the loop
+    calls ``observe_release(keys, t)`` with the notes the release signal points
+    at:
+
+    * MaskedMig (version-bump baseline): every note of a library whose
+      installed version changed since the previous maintenance period.
+    * AcmeSDK (changelog-aware baseline): every note whose API is named in
+      the release notes of that month.
+
+    Flagged notes get stale score 1.0 and are therefore probed first; leftover
+    budget follows the plain TTL order. A flag is cleared by a probe or a repair.
+    """
+
+    name = "release_aware"
+
+    def __init__(self, cfg: FilterConfig, h_ttl=5e-3):
+        super().__init__(cfg, h_ttl=h_ttl)
+        self.flagged = set()
+
+    def observe_release(self, keys, t):
+        self.flagged.update(k for k in keys if k in self.ab)
+
+    def stale_score(self, k, t):
+        if k in self.flagged:
+            return 1.0
+        return super().stale_score(k, t)
+
+    def observe_probe(self, k, is_valid, t):
+        self.flagged.discard(k)
+        super().observe_probe(k, is_valid, t)
+
+    def on_repair(self, k, t):
+        self.flagged.discard(k)
+        super().on_repair(k, t)
+
+
 class ContractFilter(BaseFilter):
     """Deterministic contract checking (Skill-Drift-style): an entry is flagged
     iff a loud environment-change error was observed for it. Per-item, binary,
@@ -1202,6 +1241,8 @@ def build_filter(method, cfg=None, judge_fn=None, truth_fn=None):
         return TTLFilter(cfg, h_ttl=5e-3)
     if method == "two_counters":            # Table 4 baseline: TTL clock + running success rate
         return TwoCountersFilter(cfg)
+    if method == "release_aware":           # Reviewer TvTY W1(b)/Q1: version-bump (MaskedMig) / changelog-aware (AcmeSDK)
+        return ReleaseAwareFilter(cfg)
     if method == "random":
         return RandomFilter(cfg)
     if method == "frequency":

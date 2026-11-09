@@ -343,6 +343,13 @@ def run_condition(cond, a, tasks, exam_qs):
                     ids))
             pre = dict(zip(ids, vals))
         month = collections.Counter()
+        if flt is not None and hasattr(flt, "observe_release"):
+            # Reviewer TvTY W1(b)/Q1, version-bump baseline: flag every note of a library whose
+            # installed version changed since the previous maintenance quarter.
+            q_prev = exam_qs[qi - 2] if qi > 1 else ""
+            _hit = [k for k in ids if q_prev < notes[k]["task_ref"]["quarter"] <= q]
+            flt.observe_release(_hit, tf)
+            month["release_flagged"] += len(_hit)
         grp_month = None
         if cond != "none":
             for k in ids:
@@ -499,7 +506,7 @@ def run_condition(cond, a, tasks, exam_qs):
         mf.write(json.dumps({"q": q, "qi": qi, "valid_notes": (sum(1 for k in ids if pre.get(k)) if cond != "none" else None),
                              "n_notes": len(ids),
                              **{k: month[k] for k in ("probes", "probe_valid", "repairs", "repair_ok", "breaks", "caught",
-                                                      "rewrites", "rewrite_ok", "budget_spent")},
+                                                      "rewrites", "rewrite_ok", "budget_spent", "release_flagged")},
                              "grp": grp_month}) + "\n")
         mf.flush()
         if todo or month["repairs"]:

@@ -1,0 +1,19 @@
+参照 ours             覆盖  40.3  代理成功  61.5
+参照 ours_hhmm        覆盖  45.2  代理成功  63.0
+参照 bayesian_agent   覆盖  31.3  代理成功  56.0
+
+前 8 组 (按覆盖率):
+  覆盖  46.0 代理成功  63.8 probes  385 修好 107  {'hmm_rho': 0.7, 'hmm_recover': 0.5, 'hmm_bg': 0.012, 'pool_kappa': 10.0}
+  覆盖  45.2 代理成功  62.9 probes  396 修好 103  {'hmm_rho': 0.7, 'hmm_recover': 2.0, 'hmm_bg': 0.024, 'pool_kappa': 5.0}
+  覆盖  45.2 代理成功  63.5 probes  403 修好 106  {'hmm_rho': 0.5, 'hmm_recover': 0.5, 'hmm_bg': 0.024, 'pool_kappa': 10.0}
+  覆盖  45.2 代理成功  63.0 probes  386 修好 105  {'hmm_rho': 0.5, 'hmm_recover': 1.0, 'hmm_bg': 0.012, 'pool_kappa': 5.0}
+  覆盖  45.2 代理成功  62.1 probes  413 修好 106  {'hmm_rho': 0.7, 'hmm_recover': 0.5, 'hmm_bg': 0.024, 'pool_kappa': 5.0}
+  覆盖  44.8 代理成功  63.4 probes  402 修好 103  {'hmm_rho': 0.5, 'hmm_recover': 0.5, 'hmm_bg': 0.024, 'pool_kappa': 5.0}
+  覆盖  44.7 代理成功  63.5 probes  394 修好 104  {'hmm_rho': 0.7, 'hmm_recover': 1.0, 'hmm_bg': 0.024, 'pool_kappa': 5.0}
+  覆盖  44.7 代理成功  63.9 probes  373 修好 105  {'hmm_rho': 0.7, 'hmm_recover': 2.0, 'hmm_bg': 0.012, 'pool_kappa': 2.0}
+默认组: (45.17291066282421, 62.96829971181557, 385.75, 105.0)
+全部 81 组: 覆盖率 最低 40.4 中位 43.0 最高 46.0; 代理成功 最低 60.3 中位 62.3 最高 63.9
+最差 3 组:
+   (40.56195965417867, 61.1671469740634) {'hmm_rho': 0.7, 'hmm_recover': 1.0, 'hmm_bg': 0.006, 'pool_kappa': 10.0}
+   (40.48991354466859, 62.46397694524496) {'hmm_rho': 0.5, 'hmm_recover': 1.0, 'hmm_bg': 0.006, 'pool_kappa': 5.0}
+   (40.4178674351585, 61.31123919308358) {'hmm_rho': 0.7, 'hmm_recover': 1.0, 'hmm_bg': 0.006, 'pool_kappa': 5.0}

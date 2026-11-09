@@ -516,6 +516,25 @@ def exam_one(W, e, sel, m, a):
 _LLM_GRAPH = {}
 
 
+_CL_NAME = re.compile(r"`(\w+)\.(\w+)`")
+_PY_IMPORT = re.compile(r"from\s+acmesdk\.(\w+)\s+import\s+(\w+)")
+_CLI_CALL = re.compile(r"acmectl\s+(\w+)\s+(\w+)")
+
+
+def changelog_names(W, m):
+    """Every `subsystem.name` mentioned in the release notes of month m (changelog-aware baseline)."""
+    p = f"{W.sd}/changelog/M{m:02d}.md"
+    if not os.path.exists(p):
+        return set()
+    return {f"{s}.{n}" for s, n in _CL_NAME.findall(open(p).read())}
+
+
+def note_api(snippet):
+    """The API a note snippet currently calls, as `subsystem.name`; None if unrecognised."""
+    mt = _PY_IMPORT.search(snippet) or _CLI_CALL.search(snippet)
+    return f"{mt.group(1)}.{mt.group(2)}" if mt else None
+
+
 def factor_parents(W, k, sub, a, cond):
     """一张笔记挂哪些共享变量 (--factors): sub = 声明的部门 (现状); kernel = 真值内核模板 (上界);
     both = 部门 + 内核; llm:<json> = LLM 建的图 (note_id -> [[factor, weight], ...]); none = 不挂."""
@@ -591,6 +610,13 @@ def run_condition(W, cond, a):
         t0 = time.time()
         pre = {k: W.valid(notes[k]["snippet"], m) for k in ids} if cond != "none" else {}
         month = collections.Counter()
+        if flt is not None and hasattr(flt, "observe_release"):
+            # Reviewer TvTY W1(b)/Q1, changelog-aware baseline: read this month's release notes and
+            # flag every note whose API is named there (matched on the name the snippet currently calls).
+            _named = changelog_names(W, m)
+            _hit = [k for k in ids if k not in retired and note_api(notes[k]["snippet"]) in _named]
+            flt.observe_release(_hit, m)
+            month["release_flagged"] += len(_hit)
         grp_month = None
         if cond != "none":
             for k in ids:
@@ -907,7 +933,7 @@ def run_condition(W, cond, a):
                 rr = sorted(flt.reliability(k) for k in ids)
                 rel_p10 = round(rr[len(rr) // 10], 3)          # 质量估计的低十分位, 用来看门槛定得合不合适
             mf.write(json.dumps({"m": m, "valid_notes": fresh_n, "n_notes": len(ids),
-                                 "n_retired": len(retired), "rel_p10": rel_p10, **{k: month[k] for k in ("probes", "probe_valid", "retired", "repairs", "repair_ok", "mech_ok", "prop_probes", "prop_tries", "prop_ok", "demo_repairs", "demo_ok", "budget_spent", "breaks", "caught", "rewrites", "rewrite_ok")},
+                                 "n_retired": len(retired), "rel_p10": rel_p10, **{k: month[k] for k in ("probes", "probe_valid", "retired", "repairs", "repair_ok", "mech_ok", "prop_probes", "prop_tries", "prop_ok", "demo_repairs", "demo_ok", "budget_spent", "breaks", "caught", "rewrites", "rewrite_ok", "release_flagged")},
                                  "grp": grp_month}) + "\n")
         for key in ("probes", "repairs", "repair_ok", "mech_ok", "prop_ok"):
             stats[key] += month[key]
