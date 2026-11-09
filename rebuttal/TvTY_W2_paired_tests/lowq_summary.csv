@@ -1,0 +1,4 @@
+policy,pass_rate_pooled,sd_over_seeds,exams,wins_vs_ours,losses_vs_ours,p_two_sided
+Bayesian-Harness (quality estimated),63.8,3.8,1019,,,
+Quality frozen at 1 (no quality variable),59.7,3.8,1019,73,31,4.66e-05
+Bayesian-Agent,53.7,3.5,1019,123,20,2.78e-19

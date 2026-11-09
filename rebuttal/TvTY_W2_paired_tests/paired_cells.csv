@@ -1,0 +1,13 @@
+corpus,model,baseline,wins,losses,p_two_sided,per_seed_wins_losses
+AcmeSDK,Qwen3.5-4B,TTL,123,77,0.001402,s1:48/22 s2:38/37 s3:37/18
+AcmeSDK,Qwen3.5-4B,Bayesian-Agent,181,73,9.251e-12,s1:65/26 s2:52/27 s3:64/20
+AcmeSDK,Qwen3.5-9B,TTL,107,91,0.2864,s1:27/25 s2:35/47 s3:45/19
+AcmeSDK,Qwen3.5-9B,Bayesian-Agent,177,57,1.694e-15,s1:66/21 s2:51/19 s3:60/17
+AcmeSDK,Qwen3.5-27B,TTL,145,26,3.102e-21,s1:40/11 s2:53/11 s3:52/4
+AcmeSDK,Qwen3.5-27B,Bayesian-Agent,133,32,7.758e-16,s1:43/6 s2:40/17 s3:50/9
+MaskedMig,Qwen3.5-4B,TTL,31,17,0.05946,s1:13/2 s2:6/6 s3:12/9
+MaskedMig,Qwen3.5-4B,Bayesian-Agent,33,10,0.0006061,s1:12/3 s2:10/3 s3:11/4
+MaskedMig,Qwen3.5-9B,TTL,26,14,0.08069,s1:8/6 s2:9/4 s3:9/4
+MaskedMig,Qwen3.5-9B,Bayesian-Agent,25,14,0.1081,s1:5/5 s2:7/5 s3:13/4
+MaskedMig,Qwen3.5-27B,TTL,63,17,2.266e-07,s1:20/6 s2:9/8 s3:34/3
+MaskedMig,Qwen3.5-27B,Bayesian-Agent,36,24,0.155,s1:5/8 s2:15/6 s3:16/10

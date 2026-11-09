@@ -1,0 +1,5 @@
+corpus,baseline,wins,losses,p_two_sided
+AcmeSDK,TTL,375,194,2.74e-14
+AcmeSDK,Bayesian-Agent,491,162,2.16e-39
+MaskedMig,TTL,120,48,2.66e-08
+MaskedMig,Bayesian-Agent,94,48,0.000141

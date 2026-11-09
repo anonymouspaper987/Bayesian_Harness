@@ -1,198 +1,188 @@
-# Bayesian-Harness
+<h1 align="center">Reviewer TvTY · W2, Q4, Q5, Q6</h1>
 
 <p align="center">
-  <strong>Probabilistic Knowledge Control for LLM Agents</strong><br>
-  <sub>Anonymous code release</sub>
+  <img alt="Reviewer: TvTY" src="https://img.shields.io/badge/Reviewer-TvTY-3C5488">
+  <img alt="Points: W2(a) W2(b) W2(c) Q4 Q5 Q6" src="https://img.shields.io/badge/Points-W2(a)_W2(b)_W2(c)_Q4_Q5_Q6-E64B35">
+  <img alt="Paired tests: 12 cells + 4 pooled" src="https://img.shields.io/badge/Paired_tests-12_cells_+_4_pooled-00A087">
+  <img alt="Run logs: 33" src="https://img.shields.io/badge/Run_logs-33-8250DF">
+  <img alt="Result files: 72" src="https://img.shields.io/badge/Result_files-72-8250DF">
+  <img alt="Code: analysis only" src="https://img.shields.io/badge/Code-analysis_only-0969DA">
 </p>
 
-<p align="center">
-  <img alt="Python 3.12" src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white">
-  <img alt="License MIT" src="https://img.shields.io/badge/License-MIT-2ea44f">
-  <img alt="LLM optional" src="https://img.shields.io/badge/LLM-Optional-orange">
-  <img alt="OpenAI-compatible API" src="https://img.shields.io/badge/API-OpenAI--compatible-412991?logo=openai&logoColor=white">
-  <img alt="19 generated worlds" src="https://img.shields.io/badge/Worlds-19-0969DA">
-  <img alt="157 masked migrations" src="https://img.shields.io/badge/Migrations-157-8250DF">
-</p>
+> [!NOTE]
+> **Branch for Reviewer TvTY, weakness 2 and questions 4 to 6.** It contains every paired McNemar test quoted in the
+> rebuttal, the result files they are computed from, one script that rebuilds all of them, and the low-quality-notes world
+> that tests the quality variable without cheap repairs. The Oracle with back-off (W2(c), Q5) is in
+> [`reviewer_zpd8/W2_oracle_backoff`](../../tree/reviewer_zpd8/W2_oracle_backoff).
 
-LLM agents keep notes about changing libraries—but notes become stale. **Bayesian-Harness** decides which notes to check and rewrite under a limited maintenance budget.
+## At a glance
 
-It models two separate properties for every note:
+| Reviewer's point | What this branch adds | Jump to |
+|:---|:---|:---|
+| **W2(b), Q4** statistical evidence is thin | paired McNemar tests over exams for Table 1 (MaskedMig) and Table 6 (AcmeSDK), ours vs. TTL and vs. Bayesian-Agent, 3 models, three seeds pooled, plus the pooled-over-sizes tests and the ablation drops | [Paired tests](#1-paired-tests-w2b-q4) |
+| **W2(a), Q6** the quality variable is barely tested | a world where 35% of the notes are valid but poorly written, no cheap repair involved; quality estimated vs. frozen vs. Bayesian-Agent, with paired counts | [Quality variable](#2-the-quality-variable-w2a-q6) |
+| **W2(c), Q5** the oracle is not a meaningful reference | Oracle with back-off, 3 models × 3 seeds, in its own branch | [Oracle ceiling](#3-the-oracle-ceiling-w2c-q5) |
 
-- **Validity** — is the note still current?
-- **Quality** — how likely is the note to help?
+---
 
-> **Code is here; data lives next door.** The companion [bayesian_harness_datasets](https://github.com/anonymouspaper987/bayesian_harness_datasets) repository contains 19 generated worlds and 157 masked API migrations.
+## 1. Paired tests (W2(b), Q4)
 
-```bash
-git clone https://github.com/anonymouspaper987/bayesian_harness_datasets data
-```
+> **W2(b):** *Statistical evidence on the real corpus is thin.* On MASKEDMIG the 157 tests are identical across seeds; seeds differ only in when each break is met. The reported s.d. therefore understates uncertainty [...]. Paired tests or bootstrap CIs over tests would be needed to support the "best everywhere" framing.
+>
+> **Q4:** For Table 1 and Table 6, can you report paired significance (e.g., McNemar or a paired bootstrap over tests) between Bayesian-Harness and the strongest baseline per column?
 
-## Quick start
+**Response.** We agree that the s.d. is not enough. We therefore report paired tests over exams. Within one seed both policies sit the same exams, so only exams where exactly one policy passes are informative. We count wins (ours passes, baseline fails) and losses (baseline passes, ours fails), pool the three seeds, and report the exact two-sided binomial p-value (McNemar).
 
-No language model required:
+| Bayesian-Harness vs | AcmeSDK 4B | AcmeSDK 9B | AcmeSDK 27B | MaskedMig 4B | MaskedMig 9B | MaskedMig 27B |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| TTL | 123/77, `p=0.001` | 107/91, p=0.29 | 145/26, `p<0.001` | 31/17, p=0.06 | 26/14, p=0.08 | 63/17, `p<0.001` |
+| Bayesian-Agent | 181/73, `p<0.001` | 177/57, `p<0.001` | 133/32, `p<0.001` | 33/10, `p<0.001` | 25/14, p=0.11 | 36/24, p=0.15 |
 
-```bash
-# 1. See why validity and quality must be modeled separately
-python3 acmesdk/toy_quality.py
-python3 acmesdk/recover_2x2.py
+Cells read *wins/losses, p*. **Bayesian-Harness** wins more paired exams than the baseline in all `12` cells, and the lead is significant at p < 0.05 in `7` of them. Pooling the three model sizes per corpus, every comparison is significant.
 
-# 2. Build a synthetic world (~10 s)
-scripts/build_world.sh 1
+| Pooled over 4B / 9B / 27B | wins / losses | p |
+|:---|:---:|:---:|
+| **Bayesian-Harness** vs TTL, AcmeSDK | 375 / 194 | `p<0.001` |
+| **Bayesian-Harness** vs Bayesian-Agent, AcmeSDK | 491 / 162 | `p<0.001` |
+| **Bayesian-Harness** vs TTL, MaskedMig | 120 / 48 | `p<0.001` |
+| **Bayesian-Harness** vs Bayesian-Agent, MaskedMig | 94 / 48 | `p<0.001` |
 
-# 3. Compare maintenance policies (~2 s)
-python3 acmesdk/offline_eval.py \
-  --seeds 1 \
-  --conds ours_hhmm,bayesian_agent,ttl,random \
-  --reps 2
-```
+<p align="center"><img src="rebuttal/TvTY_W2_paired_tests/w2_paired_tests.gif" alt="Paired McNemar tests per cell" width="960"></p>
 
-The evaluation reports task success, note coverage, probe cost, repair count, and probe hit rate.
+**Ablations** (Qwen3.5-27B, AcmeSDK, budget 24, full model vs. the ablated model):
 
-## Repository map
+| Ablation | Subset | wins / losses | p |
+|:---|:---|:---:|:---:|
+| no burst recovery | all exams | 71 / 24 | `p<0.001` |
+| no burst recovery | renamed drift | 38 / 9 | `p<0.001` |
+| no error channel | all exams | 52 / 32 | `p=0.037` |
+| no error channel | renamed drift | 25 / 10 | `p=0.017` |
+
+The paired counts for the two largest ablation drops are significant. We will add paired counts to every ablation row and both paired tables to the revision.
+
+<details>
+<summary><strong>Which runs feed which test</strong></summary>
+
+A paired test needs both policies on identical exams, so the inputs are:
+
+- **AcmeSDK, budget 24.** The runs behind the paper's Table 6 (`results/acmesdk/seed*/qwen*_mb24_{ours_hhmm,ttl,bayesian_agent}.jsonl`), 346 / 343 / 330 exams for seeds 1 / 2 / 3. Keys are `(task_id, month)`.
+- **MaskedMig, budget 24.** All three policies rerun on one inference stack in two back-to-back jobs (`results/maskedmig/tq1_*`, logs in `logs/ours_maskedmig` and `logs/ttl_bayesian_agent`), 157 migrations per seed, keys `(task_id, quarter)`. These reruns exist so that every pair sits identical exams on identical infrastructure; their absolute levels are not the paper's Table 1, which was produced on a different machine and engine.
+- **Ablations.** The runs behind the paper's Table 3 (`results/acmesdk/seed*/qwen27b_mb24_ours_hhmm_no_{recover,error_channel}.jsonl`).
+- The renamed-drift subset uses the world truth files (`$ACMESDK_DATA/seed*/truth`), available in the datasets repository.
+
+</details>
+
+---
+
+## 2. The quality variable (W2(a), Q6)
+
+> **W2(a):** *The quality variable is barely tested in the main results.* [...] every item starts verified, so there are no low-quality-but-valid items. The internal/external distinction [...] is therefore exercised only in the separability study, where low quality is injected artificially via "cheap repairs." The direct evidence that estimating quality helps is also weak. In Table 11, estimated quality gives 46.0±6.5 / 67.0±3.4, compared with 36.9±11.0 / 63.8±3.6 when quality is frozen at 1. The overall gap is within one s.d.
+>
+> **Q6:** Is there any condition without injected cheap repairs where items are naturally low-quality while valid [...], so that the internal-vs-external distinction is tested without an artificial construction?
+
+**Response.** Table 11 runs the main protocol with only the quality variable frozen, so it is not the separability study. The means are within one s.d. because the s.d. is across three worlds of different difficulty. The paired test removes that. On renamed drift, estimated quality wins `45` exams and loses `12` (p < 0.001).
+
+We also ran a world where 35% of the notes are valid but poor. They keep the API name and lose the usage example (`--lowq-frac 0.35`, see `acmesdk/lowq.py`). No cheap repair is involved.
+
+| (AcmeSDK, Qwen3.5-27B, budget 12, 3 seeds, 35% poor notes) | pass rate | paired vs. ours (wins / losses, p) |
+|:---|:---:|:---:|
+| **Bayesian-Harness (quality estimated)** | **`63.8 ± 3.8`** |  |
+| Quality frozen at 1 (no quality variable) | `59.7 ± 3.8` | 73 / 31, `p<0.001` |
+| Bayesian-Agent | `53.7 ± 3.5` | 123 / 20, `p<0.001` |
+
+Estimating quality beats a frozen quality variable by 4.1 points and wins `73` exams to `31` (p < 0.001). On probes spent on valid notes, freezing quality raises the share from 62.8% to 81.0% (paper Table 3). The rest is the price of catching stale notes under a budget, and exam success counts both sides. We agree this world is still a construction; notes written by a weaker model would be the natural test. We will add the low-quality world to the appendix.
+
+---
+
+## 3. The Oracle ceiling (W2(c), Q5)
+
+> **W2(c):** *The oracle is not a meaningful reference.* The "oracle" is beaten by the method at budget 12 in three of five models [...]. Its accuracy also declines over time because it retries impossible repairs.
+>
+> **Q5:** Can you add a stronger reference, e.g., an oracle that knows staleness and skips repairs that previously failed?
+
+**Response.** We agree. Oracle knows which notes are broken, but it retries every broken note in every period, including notes the model cannot fix. We gave Oracle a back-off, no retry for 3 months after a failed repair.
+
+| (AcmeSDK, budget 12, 3 seeds) | Qwen3.5-4B | Qwen3.5-9B | Qwen3.5-27B |
+|:---|:---:|:---:|:---:|
+| Oracle, retry every period (paper) | 32.6 ± 4.2 | 40.4 ± 6.1 | 69.3 ± 3.0 |
+| Oracle with back-off (new) | `46.1 ± 1.6` | `55.0 ± 4.5` | `73.8 ± 3.2` |
+| Bayesian-Harness (ours, paper) | 35.1 ± 4.1 | 46.6 ± 4.2 | 70.9 ± 2.2 |
+
+Oracle with back-off is above our method at every size, by 11.0, 8.4 and 2.9 points. This is the achievable ceiling, and the gap to it is the remaining headroom. We will use it as the reference in the revision. Code, 27 run logs and the figure are in [`reviewer_zpd8/W2_oracle_backoff`](../../tree/reviewer_zpd8/W2_oracle_backoff).
+
+---
+
+## What this branch adds
 
 ```text
-bayesian_harness/   Bayesian model, baselines, and filter registry
-acmesdk/            Synthetic SDK world, agent loop, and analysis
-maskedmig/          157 masked real-API migrations
-scripts/            Build, serve, and run helpers
+rebuttal/TvTY_W2_paired_tests/
+  paired_rebuttal.py                     rebuilds every table of this README from results/ (and the GIF)
+  paired_cells.csv                       12 cells: wins, losses, exact p, per-seed counts
+  paired_pooled.csv                      4 pooled tests over the three model sizes
+  ablation_paired.csv                    no burst recovery / no error channel, all exams and renamed drift
+  lowq_summary.csv                       low-quality-notes world: pooled pass rate ± s.d. and paired counts
+  results/acmesdk/seed{1,2,3}/
+    qwen{4b,9b,27b}_mb24_{ours_hhmm,ttl,bayesian_agent}.jsonl        Table 6 runs, one row per exam
+    qwen27b_mb24_ours_hhmm_no_{recover,error_channel}.jsonl         Table 3 ablation runs
+    qwen27b_mb12_lowq035_{ours_hhmm,pbar1.0_ours_hhmm_validity_only,bayesian_agent}.jsonl
+    qwen27b_mb12_lowq035.lowq.json                                  which 35% of the notes were degraded
+  results/maskedmig/tq1_q{4b,9b,27b}_s{1,2,3}_mb24_{ours_hhmm,ttl,bayesian_agent}.jsonl   same-stack reruns, one row per migration
+  logs/ours_maskedmig/        9 lanes + run.log   Bayesian-Harness (shared lanes with the release-aware baseline of the W1 branch)
+  logs/ttl_bayesian_agent/   18 lanes + run.log   TTL and Bayesian-Agent, both corpora
+  logs/lowq/                  6 lanes             low-quality world: quality frozen at 1, Bayesian-Agent
+  style.py                                        plot style
 ```
 
-Start with [`bayesian_harness/filters.py`](bayesian_harness/filters.py). `build_filter()` contains the full policy registry.
+No library code changes. `acmesdk/paired_tests.py` on `main` implements the same test for the paper; `paired_rebuttal.py` is a self-contained version that reads the files of this branch.
 
-## Methods
-
-| Method | CLI name | Implementation |
-|---|---|---|
-| **Bayesian-Harness** | `ours_hhmm` | `HierarchicalHMMFilter` |
-| Bayesian-Agent | `bayesian_agent` | `BayesianAgentFilter` |
-| TTL | `ttl` | `TTLFilter` |
-| Random | `random` | `RandomFilter` |
-| Two counters | `two_counters` | `TwoCountersFilter` |
-| Oracle | `oracle` | Free release-note access |
-| Static / none | `static`, `none` | No maintenance / no notes |
-
-<details>
-<summary><strong>View ablation names</strong></summary>
-
-| Ablation | CLI name | Config field |
-|---|---|---|
-| No burst recovery | `ours_hhmm_no_recover` | `hmm_recover` |
-| No shared factors | `ours_hhmm_no_factor` | `use_factors` |
-| No subsystem pooling | `ours_hhmm_no_pool` | `pool_kappa` |
-| No error channel | `ours_hhmm_no_error_channel` | `use_error_channel` |
-| Fixed hazard | `ours_hhmm_fixed_lambda` | `hazard_learn` |
-| Validity only | `ours_hhmm_validity_only` | `fixed_pbar` |
-
-</details>
-
-## Run with a real model
-
-One **cell** runs one model, seed, and monthly budget across all policies and 36 months.
+## Reproduce
 
 ```bash
-scripts/serve_vllm.sh Qwen/Qwen3.5-27B 8000
-scripts/build_world.sh 1
-TAG=qwen27b scripts/run_acmesdk.sh Qwen/Qwen3.5-27B 1 24
+# every table of this README (and the GIF) from the result files in this branch, a few seconds
+python3 rebuttal/TvTY_W2_paired_tests/paired_rebuttal.py
+# with the world truth files available, the renamed-drift subset of the ablation rows is filled in too
+ACMESDK_DATA=/path/to/data/acmesdk python3 rebuttal/TvTY_W2_paired_tests/paired_rebuttal.py
 
-python3 acmesdk/analyze.py --seed 1 --prefix qwen27b_mb24
-python3 acmesdk/summarize_hhmm.py
-python3 acmesdk/paired_tests.py
+# rerun the MaskedMig policies on one stack (needs a model server and the migration environments)
+for s in 1 2 3; do LANES="ours_hhmm ttl bayesian_agent" scripts/run_maskedmig.sh Qwen/Qwen3.5-27B 24 $s; done
+
+# the low-quality world (AcmeSDK, budget 12)
+python3 acmesdk/loop.py --seed 1 --model Qwen/Qwen3.5-27B --conditions ours_hhmm,bayesian_agent \
+    --maint-budget 12 --task-budget 3 --workers 8 --lowq-frac 0.35 --out-prefix data/acmesdk/seed1/results/qwen27b_mb12_lowq035
+python3 acmesdk/loop.py --seed 1 --model Qwen/Qwen3.5-27B --conditions ours_hhmm_validity_only --cfg fixed_pbar=1.0 \
+    --maint-budget 12 --task-budget 3 --workers 8 --lowq-frac 0.35 --out-prefix data/acmesdk/seed1/results/qwen27b_mb12_lowq035_pbar1.0
 ```
 
-Results are written to `data/acmesdk/seed1/results/` as JSONL files. The summarizer safely reports missing cells on a fresh clone.
+## Integrity
 
-<details>
-<summary><strong>Gemini / Vertex AI</strong></summary>
+- Every AcmeSDK result file has one row per scheduled exam (346 / 343 / 330 for seeds 1 / 2 / 3), every MaskedMig file has 157 rows; 69 result files plus the three `lowq.json` lists.
+- The four CSV files are the unedited output of `paired_rebuttal.py` on these files; every number in this README is read from them.
+- `logs/*/run.log` are the unedited launcher timelines; every lane exited with code 0.
 
-```bash
-export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
-export GOOGLE_CLOUD_PROJECT=your-gcp-project-id
-scripts/run_acmesdk.sh gemini-2.5-flash-lite 1 24
-```
+## Environment of the new runs
 
-Model names beginning with `gemini` use Vertex AI. Set `GEMINI_THINKING` to override the default low thinking level.
+| | |
+|:---|:---|
+| Inference | vLLM 0.30.0 (PyTorch 2.13.0+cu130, transformers 5.22.1), one NVIDIA H200, `--max-model-len 32768`, `--gpu-memory-utilization` 0.92 (27B) / 0.90 (4B, 9B) |
+| Models | Qwen3.5-4B `851bf6e8`, Qwen3.5-9B `c2022362`, Qwen3.5-27B `fc05daec` (Hugging Face snapshot prefixes) |
+| Code | `main` of this repository plus the changes listed above |
+| Protocol | identical flags to the paper's main tables; only the policy list differs |
+| Anonymization | paths, user and host names in logs and result files were replaced by `$REPO`, `$HOME`, `user`, `node`; nothing else was edited |
 
-</details>
+The rebuttal runs used a different machine and inference-engine version from the runs behind the paper's tables, so a rerun of a paper row on this stack can differ from the printed value by a few points. Rows marked *paper* in the tables above are the printed values; rows marked *new* are from the files in this branch.
 
-<details>
-<summary><strong>Variant worlds</strong></summary>
+## Other rebuttal branches
 
-```bash
-scripts/build_world.sh 1 _noburst --n-vertical 0 --n-horizontal 0
-scripts/build_world.sh 1 _dense   --n-vertical 12
-scripts/build_world.sh 1 _fixed   --vmode fixed
-scripts/build_world.sh 1 _htail   --vmode heavytail
-scripts/build_world.sh 1 _kern    --n-kernel 6
+Every branch starts from `main`, adds only what the reviewer asked for, and carries its own README.
 
-TAG=qwen27b scripts/run_acmesdk.sh Qwen/Qwen3.5-27B 1 24 _kern
-python3 acmesdk/analyze_robust.py \
-  --worlds fixed,htail,kern --seeds 1 --conds ours_hhmm,ttl,oracle
-```
+| Branch | Reviewer | Points | Content |
+|:---|:---:|:---:|:---|
+| [`reviewer_5Xuf/W1_FactorRuleFilter`](../../tree/reviewer_5Xuf/W1_FactorRuleFilter) | 5Xuf | W1, Q1 | `FactorRuleFilter` (sibling-propagation rule) under both main-table protocols, 36 run logs |
+| [`reviewer_5Xuf/W2_exact`](../../tree/reviewer_5Xuf/W2_exact) | 5Xuf | W2, Q2 | exact period-by-period staleness update next to the first-order form used in the paper |
+| [`reviewer_zpd8/Q1_failed_repair`](../../tree/reviewer_zpd8/Q1_failed_repair) | zpd8 | Q1 | what happens after a failed repair: reset (paper) vs. keep-as-broken-and-retry, 18 run logs |
+| [`reviewer_zpd8/W1_two_counters`](../../tree/reviewer_zpd8/W1_two_counters) | zpd8 | W1, Q2 | two-counter policy under the MaskedMig main-table protocol, 9 run logs |
+| [`reviewer_zpd8/W2_oracle_backoff`](../../tree/reviewer_zpd8/W2_oracle_backoff) | zpd8 | W2 | Oracle with back-off after a failed repair, 27 run logs |
+| [`reviewer_TvTY/W1_release_signal`](../../tree/reviewer_TvTY/W1_release_signal) | TvTY | W1, Q1, Q2, Q3 | release-aware baseline (version bump / changelog), sensitivity sweep on the reviewer's grid, calibration data |
+| [`reviewer_TvTY/W2_paired_tests`](../../tree/reviewer_TvTY/W2_paired_tests) **(this branch)** | TvTY | W2, Q4, Q5, Q6 | paired McNemar tests for every main-table cell, low-quality-notes world, pointer to the Oracle ceiling |
 
-</details>
-
-## Masked real-API migrations
-
-The dataset supplies the corpus; each exam also needs an isolated environment for a real library release.
-
-```bash
-export MIG_ENVS=/somewhere/with/space   # requires tens of GB
-python3 maskedmig/build_fresh_envs.py
-
-scripts/serve_vllm.sh Qwen/Qwen3.5-27B 8000
-for s in 1 2 3; do
-  TAG=qwen27b scripts/run_maskedmig.sh Qwen/Qwen3.5-27B 24 $s
-done
-python3 acmesdk/mig_abl_summary.py --prefix qwen27b
-```
-
-Successor API names are replaced by random hashes in the package, changelog, and exam. This prevents models from solving migrations from pre-training memory alone.
-
-<details>
-<summary><strong>Rebuild the migration corpus</strong></summary>
-
-```bash
-python3 maskedmig/fresh_pipeline.py mine
-python3 maskedmig/fresh_pipeline.py gen
-python3 maskedmig/hunt_successors.py
-python3 maskedmig/verify_successors.py
-```
-
-These stages write to `$MASKEDMIG_DATA` and require the environments above.
-
-</details>
-
-## Setup
-
-- **Python 3.12** is required for released worlds.
-- The core harness uses only the standard library.
-- `pip install -r requirements.txt` installs optional Gemini and review dependencies.
-- Any OpenAI-compatible server can replace vLLM.
-
-<details>
-<summary><strong>Environment variables</strong></summary>
-
-| Variable | Default | Purpose |
-|---|---|---|
-| `ACMESDK_DATA` | `data/acmesdk` | Generated worlds |
-| `ACMESDK_SCRATCH` | system temp | Per-exam scratch space |
-| `ACME_WORLD_SUFFIX` | none | Select a variant world |
-| `MASKEDMIG_DATA` | `data/maskedmig` | Migration corpus |
-| `MIG_ENVS` | `data/mig_envs` | Built package environments |
-| `MIG_SCRATCH` | system temp | Build and unpack space |
-| `GITCHAMELEON_DIR` | `data/gitchameleon` | Optional mining input |
-| `RUN_LOG_DIR` | `logs` | Run logs |
-
-</details>
-
-## Not included
-
-- Run outputs and logs
-- Large per-library `maskedmig` environments
-- The optional GitChameleon release and manual-review sheet
-
-Synthetic worlds can be rebuilt with `scripts/build_world.sh`. Rebuilt worlds reproduce the API surface, drift events, and task pool; monthly exam samples may differ from the released copy.
-
-## License
-
-MIT. Source comments are primarily in Chinese; references to `IDEA Sec 3.x` correspond to Section 3 of the paper.
+The full code release and its documentation are on the [`main`](../../tree/main) branch. The data (19 generated worlds, 157 masked migrations) is in the companion [bayesian_harness_datasets](https://github.com/anonymouspaper987/bayesian_harness_datasets) repository.
