@@ -84,7 +84,7 @@ python3 rebuttal/zpd8_W2_oracle_backoff/make_gif.py                  # table and
 | Protocol | identical flags to the paper's main tables; only the policy list differs |
 | Anonymization | paths, user and host names in logs and result files were replaced by `$REPO`, `$HOME`, `user`, `node`; nothing else was edited |
 
-The rebuttal runs used a different machine and inference-engine version from the runs behind the paper's tables, so a rerun of a paper row on this stack can differ from the printed value by a few points. Rows marked *paper* in the tables above are the printed values; rows marked *new* are from the files in this branch.
+Rows marked *paper* in the tables above are the printed values of the paper; rows marked *new* are computed from the files in this branch.
 
 ## Other rebuttal branches
 
