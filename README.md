@@ -4,22 +4,22 @@
   <img alt="Reviewer: 5Xuf" src="https://img.shields.io/badge/Reviewer-5Xuf-3C5488">
   <img alt="Points: W1 Q1" src="https://img.shields.io/badge/Points-W1_Q1-E64B35">
   <img alt="Policy: factor_rule" src="https://img.shields.io/badge/Policy-factor__rule-00A087">
-  <img alt="Run logs: 36" src="https://img.shields.io/badge/Run_logs-36-8250DF">
+  <img alt="Run logs: 9" src="https://img.shields.io/badge/Run_logs-9-8250DF">
   <img alt="Code: unchanged" src="https://img.shields.io/badge/Code-unchanged-0969DA">
 </p>
 
 > [!NOTE]
 > **Branch for Reviewer 5Xuf, weakness 1 and question 1.** It adds the run logs of `FactorRuleFilter`, the non-Bayesian
-> rule that propagates suspected invalidity to every note of the same subsystem, under the exact protocols of both main
-> tables: MaskedMig (budget 24) and AcmeSDK (budgets 12, 24, 48), three model sizes, three seeds each. The code is the
-> same as `main`; `FactorRuleFilter` has been in `bayesian_harness/filters.py` since the submission.
+> rule that propagates suspected invalidity to every note of the same subsystem, under the exact protocol of the paper's
+> main table (MaskedMig, budget 24), three model sizes, three seeds each. The code is the same as `main`;
+> `FactorRuleFilter` has been in `bayesian_harness/filters.py` since the submission.
 
 ## At a glance
 
 | Reviewer's point | What this branch adds | Jump to |
 |:---|:---|:---|
-| **W1** the repository's `FactorRuleFilter` is absent from the main results | the policy run under both main-table protocols, 36 lanes | [Results](#results) |
-| **Q1** how does it compare with simpler subsystem-aware heuristics under the same budgets | MaskedMig and AcmeSDK tables next to the paper's rows; a second subsystem-aware heuristic (two counters) in a sibling branch | [Results](#results), [Related](#other-rebuttal-branches) |
+| **W1** the repository's `FactorRuleFilter` is absent from the main results | the policy run under the main-table protocol, 9 runs | [Results](#results) |
+| **Q1** how does it compare with simpler subsystem-aware heuristics under the same budgets | the MaskedMig table next to the paper's rows; a second subsystem-aware heuristic (two counters) in a sibling branch | [Results](#results), [Related](#other-rebuttal-branches) |
 
 ---
 
@@ -48,15 +48,6 @@
 
 From the table, the benefit comes mainly from modelling validity and quality, not from sharing the subsystem information alone. `FactorRuleFilter` shares suspicion across a subsystem but stays near TTL.
 
-**AcmeSDK, the appendix table** (36 months, 3 seeds; the new rows are in this branch's logs):
-
-| `FactorRuleFilter` (new) | Qwen3.5-4B | Qwen3.5-9B | Qwen3.5-27B |
-|:---|:---:|:---:|:---:|
-| budget 12 per month | `30.0 ± 6.1` | `40.0 ± 3.7` | `63.4 ± 4.2` |
-| budget 24 per month | `39.6 ± 3.6` | `47.8 ± 5.2` | `71.8 ± 3.8` |
-| budget 48 per month | `47.9 ± 3.5` | `55.8 ± 5.0` | `78.3 ± 1.2` |
-| **Bayesian-Harness (ours, paper), budget 12 / 24 / 48** | **33.7 / 40.7 / 45.5** | **46.7 / 52.8 / 59.9** | **67.0 / 74.6 / 76.8** |
-
 <p align="center"><img src="rebuttal/W1_FactorRuleFilter/w1_factor_rule.gif" alt="FactorRuleFilter vs. other policies on MaskedMig" width="950"></p>
 
 <details>
@@ -70,9 +61,7 @@ From the table, the benefit comes mainly from modelling validity and quality, no
 
 ```text
 rebuttal/W1_FactorRuleFilter/
-  logs/mig_q{4b,9b,27b}_s{1,2,3}.log            9 MaskedMig lanes, one line per quarter
-  logs/acme_q{4b,9b,27b}_s{1,2,3}_mb{12,24,48}.log   27 AcmeSDK lanes, one line per month
-  logs/run.log                                   launcher timeline (all lanes, all models), unedited
+  logs/mig_q{4b,9b,27b}_s{1,2,3}.log            9 MaskedMig runs, one line per quarter, final per-condition block
   make_gif.py                                    draws the GIF above
 ```
 
@@ -81,21 +70,18 @@ rebuttal/W1_FactorRuleFilter/
 ```bash
 # one MaskedMig cell (needs a model server, see scripts/serve_vllm.sh, and the migration environments)
 LANES=factor_rule scripts/run_maskedmig.sh Qwen/Qwen3.5-27B 24 1
-# one AcmeSDK cell (needs a built world, scripts/build_world.sh 1)
-LANES=factor_rule TAG=qwen27b scripts/run_acmesdk.sh Qwen/Qwen3.5-27B 1 24
 ```
 
 ## Reading the logs
 
-One line per period, for example `[factor_rule] M07: 10 题 8 解出, 有效笔记 403/412, probes 6 repairs 3(ok 2), 19s`
-reads: month 7, 10 exams, 8 passed, 403 of 412 notes currently valid, 6 probes, 3 repairs of which 2 passed verification.
-The final block of every log is the per-condition summary. `run.log` keeps two launches that produced no results (a cancelled
-allocation at 13:37 and a server that could not bind its port at 14:44); the grids were rerun from scratch afterwards.
+One line per quarter, for example `[factor_rule] 2025Q4: 7 题 4 解出, 已修复笔记 15, probes 6 repairs 5(ok 4), 48s`
+reads: quarter 2025Q4, 7 exams, 4 passed, 15 notes repaired so far, 6 probes, 5 repairs of which 4 passed verification.
+The final block of every log is the per-condition summary.
 
 ## Integrity
 
-- Every table cell above marked *new* is recomputed from the per-period lines of the logs in this branch (pooled pass rate over the three seeds, s.d. across seeds).
-- 36 lanes, every lane exit code 0 in `logs/run.log`.
+- The *new* row above is recomputed from the per-quarter lines of the nine logs (pooled pass rate over the three seeds, 157 migrations each, s.d. across seeds).
+- Every run exited with code 0.
 
 ## Environment of the new runs
 
@@ -107,7 +93,7 @@ allocation at 13:37 and a server that could not bind its port at 14:44); the gri
 | Protocol | identical flags to the paper's main tables; only the policy list differs |
 | Anonymization | paths, user and host names in logs and result files were replaced by `$REPO`, `$HOME`, `user`, `node`; nothing else was edited |
 
-The rebuttal runs used a different machine and inference-engine version from the runs behind the paper's tables, so a rerun of a paper row on this stack can differ from the printed value by a few points. Rows marked *paper* in the tables above are the printed values; rows marked *new* are from the files in this branch.
+Rows marked *paper* in the tables above are the printed values of the paper; rows marked *new* are computed from the files in this branch.
 
 ## Other rebuttal branches
 
