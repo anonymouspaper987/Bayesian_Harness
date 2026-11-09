@@ -77,9 +77,16 @@ def mig(tag, cond):
 
 
 # ---- per-cell paired tests (Table 1 = MaskedMig, Table 6 = AcmeSDK, budget 24) ------------------
+# The MaskedMig cells need the per-migration files of the same-stack rerun of the three policies.
+# This branch ships the AcmeSDK files; the MaskedMig counts are kept in paired_cells.csv as computed.
+CORPORA = [("acme", "AcmeSDK")]
+if all(os.path.exists(p) for c in ("ours_hhmm", "ttl", "bayesian_agent") for t, _ in MODELS for p in mig(t, c).values()):
+    CORPORA.append(("mig", "MaskedMig"))
+else:
+    print("MaskedMig per-migration files not present: computing the AcmeSDK cells only")
 cells = {}
 rows = [["corpus", "model", "baseline", "wins", "losses", "p_two_sided", "per_seed_wins_losses"]]
-for corpus, name in (("acme", "AcmeSDK"), ("mig", "MaskedMig")):
+for corpus, name in CORPORA:
     for tag, mname in MODELS:
         for b, bname in BASES:
             fa = acme(tag, 24, "ours_hhmm") if corpus == "acme" else mig(tag, "ours_hhmm")
@@ -87,15 +94,16 @@ for corpus, name in (("acme", "AcmeSDK"), ("mig", "MaskedMig")):
             W, L, p, per = compare(fa, fb, corpus)
             cells[name, mname, bname] = (W, L, p)
             rows.append([name, mname, bname, W, L, f"{p:.4g}", " ".join(f"s{s}:{w}/{l}" for s, w, l in per)])
-with open(f"{HERE}/paired_cells.csv", "w", newline="") as f:
+OUT_SUFFIX = "" if len(CORPORA) == 2 else "_acmesdk"      # never overwrite the full tables with a partial recomputation
+with open(f"{HERE}/paired_cells{OUT_SUFFIX}.csv", "w", newline="") as f:
     csv.writer(f).writerows(rows)
 
 pooled = [["corpus", "baseline", "wins", "losses", "p_two_sided"]]
-for name in ("AcmeSDK", "MaskedMig"):
+for name in [n for _, n in CORPORA]:
     for _, bname in BASES:
         W = sum(cells[name, m, bname][0] for _, m in MODELS); L = sum(cells[name, m, bname][1] for _, m in MODELS)
         pooled.append([name, bname, W, L, f"{binom_two_sided(W, W + L):.3g}"])
-with open(f"{HERE}/paired_pooled.csv", "w", newline="") as f:
+with open(f"{HERE}/paired_pooled{OUT_SUFFIX}.csv", "w", newline="") as f:
     csv.writer(f).writerows(pooled)
 
 # ---- ablations (Qwen3.5-27B, budget 24) ----------------------------------------------------------
@@ -132,7 +140,7 @@ for cond, label in LQ:
 with open(f"{HERE}/lowq_summary.csv", "w", newline="") as f:
     csv.writer(f).writerows(lowq)
 
-for name, out in (("paired_cells.csv", rows), ("paired_pooled.csv", pooled), ("ablation_paired.csv", abl), ("lowq_summary.csv", lowq)):
+for name, out in ((f"paired_cells{OUT_SUFFIX}.csv", rows), (f"paired_pooled{OUT_SUFFIX}.csv", pooled), ("ablation_paired.csv", abl), ("lowq_summary.csv", lowq)):
     print(f"== {name}")
     for r in out:
         print(",".join(map(str, r)))
@@ -148,6 +156,8 @@ try:
 except ImportError:
     print("matplotlib / pillow not available, GIF skipped"); sys.exit(0)
 
+if len(CORPORA) < 2:
+    print("GIF needs both corpora; the committed w2_paired_tests.gif was drawn from the full tables"); sys.exit(0)
 GROW, HOLD, W = 20, 32, 0.19
 fig, axes = plt.subplots(1, 2, figsize=(13, 5.6), facecolor="white", gridspec_kw={"width_ratios": [1, 1]})
 fig.subplots_adjust(left=0.065, right=0.99, top=0.80, bottom=0.10, wspace=0.14)

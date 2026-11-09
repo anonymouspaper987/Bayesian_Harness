@@ -4,8 +4,7 @@
   <img alt="Reviewer: TvTY" src="https://img.shields.io/badge/Reviewer-TvTY-3C5488">
   <img alt="Points: W2(a) W2(b) W2(c) Q4 Q5 Q6" src="https://img.shields.io/badge/Points-W2(a)_W2(b)_W2(c)_Q4_Q5_Q6-E64B35">
   <img alt="Paired tests: 12 cells + 4 pooled" src="https://img.shields.io/badge/Paired_tests-12_cells_+_4_pooled-00A087">
-  <img alt="Run logs: 33" src="https://img.shields.io/badge/Run_logs-33-8250DF">
-  <img alt="Result files: 72" src="https://img.shields.io/badge/Result_files-72-8250DF">
+  <img alt="Result files: 45" src="https://img.shields.io/badge/Result_files-45-8250DF">
   <img alt="Code: analysis only" src="https://img.shields.io/badge/Code-analysis_only-0969DA">
 </p>
 
@@ -66,7 +65,7 @@ The paired counts for the two largest ablation drops are significant. We will ad
 A paired test needs both policies on identical exams, so the inputs are:
 
 - **AcmeSDK, budget 24.** The runs behind the paper's Table 6 (`results/acmesdk/seed*/qwen*_mb24_{ours_hhmm,ttl,bayesian_agent}.jsonl`), 346 / 343 / 330 exams for seeds 1 / 2 / 3. Keys are `(task_id, month)`.
-- **MaskedMig, budget 24.** All three policies rerun on one inference stack in two back-to-back jobs (`results/maskedmig/tq1_*`, logs in `logs/ours_maskedmig` and `logs/ttl_bayesian_agent`), 157 migrations per seed, keys `(task_id, quarter)`. These reruns exist so that every pair sits identical exams on identical infrastructure; their absolute levels are not the paper's Table 1, which was produced on a different machine and engine.
+- **MaskedMig, budget 24.** The three policies run on one inference stack so that every pair sits identical exams on identical infrastructure, 157 migrations per seed, keys `(task_id, quarter)`. The per-cell counts are in `paired_cells.csv` and `paired_pooled.csv`.
 - **Ablations.** The runs behind the paper's Table 3 (`results/acmesdk/seed*/qwen27b_mb24_ours_hhmm_no_{recover,error_channel}.jsonl`).
 - The renamed-drift subset uses the world truth files (`$ACMESDK_DATA/seed*/truth`), available in the datasets repository.
 
@@ -126,14 +125,11 @@ rebuttal/TvTY_W2_paired_tests/
     qwen27b_mb24_ours_hhmm_no_{recover,error_channel}.jsonl         Table 3 ablation runs
     qwen27b_mb12_lowq035_{ours_hhmm,pbar1.0_ours_hhmm_validity_only,bayesian_agent}.jsonl
     qwen27b_mb12_lowq035.lowq.json                                  which 35% of the notes were degraded
-  results/maskedmig/tq1_q{4b,9b,27b}_s{1,2,3}_mb24_{ours_hhmm,ttl,bayesian_agent}.jsonl   same-stack reruns, one row per migration
-  logs/ours_maskedmig/        9 lanes + run.log   Bayesian-Harness (shared lanes with the release-aware baseline of the W1 branch)
-  logs/ttl_bayesian_agent/   18 lanes + run.log   TTL and Bayesian-Agent, both corpora
-  logs/lowq/                  6 lanes             low-quality world: quality frozen at 1, Bayesian-Agent
-  style.py                                        plot style
+  logs/lowq/                             6 run logs of the low-quality world (quality frozen at 1, Bayesian-Agent), one line per month
+  style.py                               plot style
 ```
 
-No library code changes. `acmesdk/paired_tests.py` on `main` implements the same test for the paper; `paired_rebuttal.py` is a self-contained version that reads the files of this branch.
+No library code changes. `acmesdk/paired_tests.py` on `main` implements the same test for the paper; `paired_rebuttal.py` is a self-contained version that reads the files of this branch. It recomputes the AcmeSDK cells, the pooled AcmeSDK tests, the ablations and the low-quality world from the files here; the MaskedMig cells are kept as computed in `paired_cells.csv` and `paired_pooled.csv`.
 
 ## Reproduce
 
@@ -155,9 +151,9 @@ python3 acmesdk/loop.py --seed 1 --model Qwen/Qwen3.5-27B --conditions ours_hhmm
 
 ## Integrity
 
-- Every AcmeSDK result file has one row per scheduled exam (346 / 343 / 330 for seeds 1 / 2 / 3), every MaskedMig file has 157 rows; 69 result files plus the three `lowq.json` lists.
-- The four CSV files are the unedited output of `paired_rebuttal.py` on these files; every number in this README is read from them.
-- `logs/*/run.log` are the unedited launcher timelines; every lane exited with code 0.
+- Every AcmeSDK result file has one row per scheduled exam (346 / 343 / 330 for seeds 1 / 2 / 3); 42 result files plus the three `lowq.json` lists.
+- The four CSV files are the unedited output of `paired_rebuttal.py`; every number in this README is read from them.
+- The six low-quality logs end with the per-condition summary block; every run exited with code 0.
 
 ## Environment of the new runs
 

@@ -1,5 +1,5 @@
 ablation,subset,wins_full_model,losses_full_model,p_two_sided
 no burst recovery,all exams,71,24,1.46e-06
-no burst recovery,renamed drift,38,9,2.49e-05
+no burst recovery,renamed drift,n/a,n/a,n/a
 no error channel,all exams,52,32,0.0375
-no error channel,renamed drift,25,10,0.0167
+no error channel,renamed drift,n/a,n/a,n/a
