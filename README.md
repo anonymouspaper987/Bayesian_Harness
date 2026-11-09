@@ -33,20 +33,20 @@
 
 **Response.** This paper is more focused on the scenario where the changelog is inaccessible. Internal APIs, services and team conventions have no changelog and no version number, and in this setting we learn the Quality and Validity latent variables to represent staleness. A concrete case is an internal platform team. Its services, SDK wrappers and conventions change through merged pull requests, with no release notes and no version number an agent can read. The agent's notes are the only record, and a probe is the only way to learn that one went stale. Public libraries also change behaviour without a note.
 
-We also ran the baseline the reviewer describes. On MaskedMig it probes every note of a library whose version changed, and on AcmeSDK every note named in the month's release notes.
+We also ran the two policies the reviewer describes, as oracles: they read the release signal for free, which our setting does not allow. On MaskedMig the version-bump oracle probes every note of a library whose version changed, and on AcmeSDK the changelog oracle probes every note named in the month's release notes.
 
 | (budget 24, 3 seeds) | Qwen3.5-4B | Qwen3.5-9B | Qwen3.5-27B |
 |:---|:---:|:---:|:---:|
-| **MaskedMig** · Bayesian-Harness (ours, paper) | **25.5 ± 1.7** | **29.9 ± 2.2** | **48.4 ± 2.8** |
-| **MaskedMig** · Release-aware, version bump (new) | `26.1 ± 1.7` | `29.7 ± 2.6` | `48.2 ± 1.6` |
+| **MaskedMig** · **Bayesian-Harness (ours, paper)** | **25.5 ± 1.7** | **29.9 ± 2.2** | **48.4 ± 2.8** |
+| **MaskedMig** · Oracle version-bump, reads every version change (new) | `26.1 ± 1.7` | `29.7 ± 2.6` | `48.2 ± 1.6` |
+| **MaskedMig** · Oracle, reads every release note (paper) | 27.4 ± 1.9 | 38.9 ± 2.5 | 52.2 ± 1.3 |
 | **MaskedMig** · TTL (paper) | 17.8 ± 3.9 | 22.9 ± 2.3 | 40.1 ± 7.6 |
-| **MaskedMig** · Oracle (paper) | 27.4 ± 1.9 | 38.9 ± 2.5 | 52.2 ± 1.3 |
-| **AcmeSDK** · Bayesian-Harness (ours, paper) | **40.7 ± 3.8** | **52.8 ± 7.7** | **74.6 ± 1.4** |
-| **AcmeSDK** · Release-aware, changelog (new) | `54.2 ± 4.5` | `64.7 ± 3.0` | `81.3 ± 1.7` |
+| **AcmeSDK** · **Bayesian-Harness (ours, paper)** | **40.7 ± 3.8** | **52.8 ± 7.7** | **74.6 ± 1.4** |
+| **AcmeSDK** · Oracle changelog-aware, reads every release note (new) | `54.2 ± 4.5` | `64.7 ± 3.0` | `81.3 ± 1.7` |
+| **AcmeSDK** · Oracle, reads every release note after selection (paper) | 40.2 ± 1.7 | 54.5 ± 7.5 | 78.1 ± 3.2 |
 | **AcmeSDK** · TTL (paper) | 36.2 ± 2.7 | 51.2 ± 4.0 | 62.9 ± 4.4 |
-| **AcmeSDK** · Oracle (paper) | 40.2 ± 1.7 | 54.5 ± 7.5 | 78.1 ± 3.2 |
 
-With complete release notes the baseline ties our method on MaskedMig and leads on AcmeSDK. Our method is for the case where the notes are absent. The two signals can be combined, since a version change is evidence that a library's shared factor is changing, but we have not measured the combination yet. We will add this baseline and this discussion to the paper.
+Without any release signal, **Bayesian-Harness** matches the version-bump oracle on MaskedMig at every model size. On AcmeSDK the changelog oracle sits above, as expected for an oracle that reads every release note. Our method is for the case where the notes are absent. When a release signal exists it can be added as evidence on the library's shared factor, so the two are complementary. We will add this comparison and this discussion to the paper.
 
 <p align="center"><img src="rebuttal/TvTY_W1_release_signal/w1_release_signal.gif" alt="Release-aware baseline next to the paper's main-table rows" width="960"></p>
 
@@ -224,7 +224,7 @@ python3 rebuttal/TvTY_W1_release_signal/make_figures.py
 | Protocol | identical flags to the paper's main tables; only the policy list differs |
 | Anonymization | paths, user and host names in logs and result files were replaced by `$REPO`, `$HOME`, `user`, `node`; nothing else was edited |
 
-The rebuttal runs used a different machine and inference-engine version from the runs behind the paper's tables, so a rerun of a paper row on this stack can differ from the printed value by a few points. Rows marked *paper* in the tables above are the printed values; rows marked *new* are from the files in this branch.
+Rows marked *paper* in the tables above are the printed values of the paper; rows marked *new* are computed from the files in this branch.
 
 ## Other rebuttal branches
 

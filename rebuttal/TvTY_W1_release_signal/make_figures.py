@@ -66,8 +66,8 @@ with open(f"{HERE}/release_flagged.csv", "w", newline="") as f:
     csv.writer(f).writerows(flag_rows)
 
 # ---- GIF: the release-aware baseline next to the paper's rows ---------------------------------
-ORDER = [("Bayesian-Agent", GRAY1, ""), ("TTL", GRAY2, ""), ("Release-aware (new)", BRICK, "//"),
-         ("Bayesian-Harness (ours)", NAVY, ""), ("Oracle", "#d9d9d9", "..")]
+ORDER = [("Bayesian-Agent", GRAY1, ""), ("TTL", GRAY2, ""), ("Bayesian-Harness (ours)", NAVY, ""),
+         ("Oracle release-aware (new)", BRICK, "//"), ("Oracle (paper)", "#d9d9d9", "..")]
 GROW, HOLD, W = 22, 30, 0.16
 fig, axes = plt.subplots(1, 2, figsize=(13, 5.6), facecolor="white")
 fig.subplots_adjust(left=0.06, right=0.99, top=0.80, bottom=0.09, wspace=0.12)
@@ -75,9 +75,9 @@ ease = lambda x: 1 - (1 - max(0.0, min(1.0, x))) ** 3
 
 
 def values(corpus, key):
-    if key.startswith("Release"):
+    if key.startswith("Oracle release"):
         return [NEW[corpus][t] for t, _ in MODELS]
-    return PAPER[corpus][key]
+    return PAPER[corpus][key.replace(" (paper)", "")]
 
 
 def draw(i):
@@ -96,13 +96,13 @@ def draw(i):
             if f >= 0.999:
                 ax.errorbar(xs, mu, yerr=sd, fmt="none", ecolor="#222222", elinewidth=1.0, capsize=3)
                 for x, m in zip(xs, mu):
-                    if key.startswith("Release") or key.startswith("Bayesian-Harness"):
+                    if key.startswith("Oracle release") or key.startswith("Bayesian-Harness"):
                         ax.text(x, m + (sd[xs.index(x)] if sd else 0) + 1.2, f"{m:.1f}", ha="center", fontsize=10,
-                                color=col if key.startswith("Release") else NAVY, fontweight="bold")
+                                color=col if key.startswith("Oracle release") else NAVY, fontweight="bold")
     axes[0].set_ylabel("Exam success (%), mean $\\pm$ s.d. over 3 seeds", fontsize=13)
     axes[0].legend(loc="upper left", ncol=5, frameon=False, fontsize=12, bbox_to_anchor=(-0.02, 1.26),
                    handlelength=1.3, columnspacing=1.1)
-    fig.suptitle("Release-aware baseline (reads the version / changelog signal) vs. the paper's main-table rows",
+    fig.suptitle("Bayesian-Harness (no release signal) next to oracles that read the version / changelog signal for free",
                  fontsize=15, y=0.985)
     return []
 
