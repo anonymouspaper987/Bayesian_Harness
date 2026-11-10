@@ -985,6 +985,9 @@ def main():
     ap.add_argument("--keep-stale-on-failed-repair", type=int, default=0,
                     help="reviewer zpd8 Q1: 1 = after a failed repair keep the note marked broken and retry it "
                          "next period (0 = paper default, reset after any attempt)")
+    ap.add_argument("--oracle-backoff", type=int, default=0,
+                    help="reviewer zpd8 W2: the Oracle does not retry a note for N months after a failed repair "
+                         "(0 = paper default, retry every month)")
     ap.add_argument("--world-suffix", default="",
                     help="变体世界目录后缀 (等价于 ACME_WORLD_SUFFIX 环境变量)")
     a = ap.parse_args()
