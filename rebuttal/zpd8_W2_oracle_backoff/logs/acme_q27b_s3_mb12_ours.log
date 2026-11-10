@@ -1,0 +1,41 @@
+模型后端: vllm Qwen/Qwen3.5-27B
+acmesdk 世界 seed3: 414 张笔记, 330 次考试 / 36 个月, 条件 ['ours_hhmm'], 维护 12/月
+== ours_hhmm
+  [ours_hhmm] M02: 3 题 2 解出, 有效笔记 412/414, probes 12 repairs 0(ok 0), 13s
+  [ours_hhmm] M03: 5 题 4 解出, 有效笔记 410/414, probes 9 repairs 1(ok 1), 24s
+  [ours_hhmm] M04: 5 题 5 解出, 有效笔记 411/414, probes 9 repairs 1(ok 1), 22s
+  [ours_hhmm] M05: 7 题 6 解出, 有效笔记 411/414, probes 12 repairs 0(ok 0), 17s
+  [ours_hhmm] M06: 10 题 8 解出, 有效笔记 407/414, probes 1 repairs 1(ok 1), 37s
+  [ours_hhmm] M07: 10 题 10 解出, 有效笔记 405/414, probes 6 repairs 2(ok 2), 33s
+  [ours_hhmm] M08: 10 题 6 解出, 有效笔记 387/414, probes 3 repairs 0(ok 0), 26s
+  [ours_hhmm] M09: 10 题 6 解出, 有效笔记 387/414, probes 6 repairs 2(ok 1), 40s
+  [ours_hhmm] M10: 10 题 6 解出, 有效笔记 386/414, probes 6 repairs 2(ok 1), 45s
+  [ours_hhmm] M11: 10 题 8 解出, 有效笔记 384/414, probes 3 repairs 3(ok 2), 83s
+  [ours_hhmm] M12: 10 题 5 解出, 有效笔记 382/414, probes 9 repairs 1(ok 1), 121s
+  [ours_hhmm] M13: 10 题 5 解出, 有效笔记 315/414, probes 6 repairs 2(ok 2), 53s
+  [ours_hhmm] M14: 10 题 3 解出, 有效笔记 298/414, probes 3 repairs 3(ok 1), 118s
+  [ours_hhmm] M15: 10 题 5 解出, 有效笔记 296/414, probes 9 repairs 1(ok 1), 46s
+  [ours_hhmm] M16: 10 题 7 解出, 有效笔记 294/414, probes 6 repairs 2(ok 0), 55s
+  [ours_hhmm] M17: 10 题 6 解出, 有效笔记 291/414, probes 6 repairs 2(ok 2), 45s
+  [ours_hhmm] M18: 10 题 6 解出, 有效笔记 290/414, probes 6 repairs 2(ok 1), 60s
+  [ours_hhmm] M19: 10 题 6 解出, 有效笔记 279/414, probes 3 repairs 3(ok 3), 223s
+  [ours_hhmm] M20: 10 题 6 解出, 有效笔记 279/414, probes 9 repairs 1(ok 1), 55s
+  [ours_hhmm] M21: 10 题 8 解出, 有效笔记 280/414, probes 3 repairs 3(ok 3), 89s
+  [ours_hhmm] M22: 10 题 6 解出, 有效笔记 281/414, probes 3 repairs 3(ok 3), 86s
+  [ours_hhmm] M23: 10 题 9 解出, 有效笔记 283/414, probes 3 repairs 3(ok 2), 63s
+  [ours_hhmm] M24: 10 题 8 解出, 有效笔记 284/414, probes 3 repairs 3(ok 3), 83s
+  [ours_hhmm] M25: 10 题 7 解出, 有效笔记 285/414, probes 9 repairs 1(ok 1), 71s
+  [ours_hhmm] M26: 10 题 8 解出, 有效笔记 267/414, probes 6 repairs 2(ok 2), 93s
+  [ours_hhmm] M27: 10 题 6 解出, 有效笔记 268/414, probes 3 repairs 3(ok 3), 79s
+  [ours_hhmm] M28: 10 题 6 解出, 有效笔记 261/414, probes 6 repairs 2(ok 2), 63s
+  [ours_hhmm] M29: 10 题 6 解出, 有效笔记 260/414, probes 6 repairs 2(ok 2), 60s
+  [ours_hhmm] M30: 10 题 6 解出, 有效笔记 261/414, probes 6 repairs 2(ok 2), 102s
+  [ours_hhmm] M31: 10 题 8 解出, 有效笔记 254/414, probes 3 repairs 3(ok 2), 45s
+  [ours_hhmm] M32: 10 题 8 解出, 有效笔记 254/414, probes 6 repairs 2(ok 1), 43s
+  [ours_hhmm] M33: 10 题 9 解出, 有效笔记 253/414, probes 9 repairs 1(ok 1), 28s
+  [ours_hhmm] M34: 10 题 8 解出, 有效笔记 241/414, probes 3 repairs 3(ok 1), 55s
+  [ours_hhmm] M35: 10 题 6 解出, 有效笔记 241/414, probes 6 repairs 2(ok 2), 81s
+  [ours_hhmm] M36: 10 题 7 解出, 有效笔记 243/414, probes 3 repairs 3(ok 1), 69s
+
+条件               solved  probes  repairs rep_ok
+ours_hhmm         68.5%     202       67      0

@@ -575,6 +575,7 @@ def run_condition(W, cond, a):
     known_broken, ledger = set(), []
     retired = set()                      # 丢弃动作: 质量太低的过期笔记不再修, 也不再注入考试
     cheap_set = getattr(a, "_cheap_set", set())
+    repair_failed_at = {}                       # reviewer zpd8 W2: note -> month of its last failed repair (--oracle-backoff)
     last_repair, repaired_month = {}, {}        # 笔记 -> 最近一次修复是 cheap/full; 笔记 -> 最近修好的月份
     broke_at, caught_set = {}, set()            # 断裂事件: 笔记 -> 最近一次失效的月份; 一个周期内被探出的 (笔记, 月)
     valid_after = {}                            # 上月维护结束后笔记是否有效 (用来判定新的断裂)
@@ -684,6 +685,8 @@ def run_condition(W, cond, a):
                     llm_fixed.append((k, old_snip, new["snippet"]))
                     for g in groups.get(k, set()):
                         demo_store.setdefault(g, []).append((m, (old_snip, new["snippet"])))
+                else:
+                    repair_failed_at[k] = m
                 if flt is not None:
                     if new is None and a.keep_stale_on_failed_repair:
                         # Reviewer zpd8 Q1 variant: a failed repair leaves the note broken, so record it
@@ -783,7 +786,10 @@ def run_condition(W, cond, a):
                         break
                     left -= a.repair_cost; rw_sel.append(k)
             if cond == "oracle":
-                broken = sorted([k for k in ids if not pre[k]], key=lambda k: -use_count[k])
+                broken = sorted([k for k in ids if not pre[k]
+                                 and not (a.oracle_backoff > 0 and k in repair_failed_at
+                                          and m - repair_failed_at[k] <= a.oracle_backoff)],
+                                key=lambda k: -use_count[k])   # --oracle-backoff N: skip notes whose repair failed in the last N months
                 sel_r = []
                 for k in broken:
                     if try_mech(k):
