@@ -1,0 +1,36 @@
+掩码主实验: 157 题, 9 个换代季度 ['2025Q2', '2025Q3', '2025Q4', '2026Q1', '2026Q2', '2026Q3', '2026Q4', '2027Q1', '2027Q2'], 条件 ['llm_rank', 'mem0', 'amem'], 维护 24/季
+== llm_rank
+  [llm_rank] 2025Q2: 6 题 0 解出, 已修复笔记 0, probes 18 repairs 2(ok 1), 29s
+  [llm_rank] 2025Q3: 3 题 2 解出, 已修复笔记 6, probes 6 repairs 6(ok 6), 23s
+  [llm_rank] 2025Q4: 8 题 4 解出, 已修复笔记 11, probes 9 repairs 5(ok 5), 25s
+  [llm_rank] 2026Q1: 9 题 2 解出, 已修复笔记 14, probes 15 repairs 3(ok 3), 32s
+  [llm_rank] 2026Q2: 1 题 0 解出, 已修复笔记 19, probes 9 repairs 5(ok 5), 22s
+  [llm_rank] 2026Q3: 30 题 2 解出, 已修复笔记 23, probes 15 repairs 3(ok 3), 54s
+  [llm_rank] 2026Q4: 27 题 3 解出, 已修复笔记 28, probes 9 repairs 5(ok 5), 46s
+  [llm_rank] 2027Q1: 41 题 3 解出, 已修复笔记 32, probes 9 repairs 5(ok 5), 52s
+  [llm_rank] 2027Q2: 32 题 10 解出, 已修复笔记 35, probes 12 repairs 4(ok 3), 39s
+== mem0
+  [mem0] 2025Q2: 6 题 0 解出, 已修复笔记 0, probes 0 repairs 0(ok 0), 20s
+  [mem0] 2025Q3: 3 题 2 解出, 已修复笔记 6, probes 6 repairs 6(ok 6), 20s
+  [mem0] 2025Q4: 8 题 1 解出, 已修复笔记 9, probes 12 repairs 4(ok 4), 34s
+  [mem0] 2026Q1: 9 题 3 解出, 已修复笔记 15, probes 6 repairs 6(ok 6), 47s
+  [mem0] 2026Q2: 1 题 0 解出, 已修复笔记 21, probes 6 repairs 6(ok 6), 25s
+  [mem0] 2026Q3: 30 题 2 解出, 已修复笔记 24, probes 2 repairs 2(ok 2), 45s
+  [mem0] 2026Q4: 27 题 4 解出, 已修复笔记 30, probes 6 repairs 6(ok 6), 50s
+  [mem0] 2027Q1: 41 题 6 解出, 已修复笔记 35, probes 6 repairs 6(ok 5), 58s
+  [mem0] 2027Q2: 32 题 7 解出, 已修复笔记 39, probes 9 repairs 5(ok 4), 42s
+== amem
+  [amem] 2025Q2: 6 题 0 解出, 已修复笔记 0, probes 0 repairs 0(ok 0), 20s
+  [amem] 2025Q3: 3 题 2 解出, 已修复笔记 6, probes 6 repairs 6(ok 6), 16s
+  [amem] 2025Q4: 8 题 5 解出, 已修复笔记 10, probes 12 repairs 4(ok 4), 31s
+  [amem] 2026Q1: 9 题 2 解出, 已修复笔记 15, probes 9 repairs 5(ok 5), 32s
+  [amem] 2026Q2: 1 题 1 解出, 已修复笔记 20, probes 9 repairs 5(ok 5), 14s
+  [amem] 2026Q3: 30 题 3 解出, 已修复笔记 23, probes 15 repairs 3(ok 3), 52s
+  [amem] 2026Q4: 27 题 2 解出, 已修复笔记 29, probes 6 repairs 6(ok 6), 39s
+  [amem] 2027Q1: 41 题 7 解出, 已修复笔记 33, probes 9 repairs 5(ok 4), 62s
+  [amem] 2027Q2: 32 题 10 解出, 已修复笔记 36, probes 12 repairs 4(ok 3), 40s
+
+条件               solved  probes  repairs rep_ok
+llm_rank          16.6%     102       38     36
+mem0              15.9%      53       41     39
+amem              20.4%      78       38     36

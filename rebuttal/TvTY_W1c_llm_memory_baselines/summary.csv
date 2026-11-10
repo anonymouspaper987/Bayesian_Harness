@@ -1,0 +1,10 @@
+policy,name,model,pass_rate,sd_over_seeds,seed1,seed2,seed3
+llm_rank,LLM prioritisation,Qwen3.5-4B,10.6,0.7,10.2,10.2,11.5
+llm_rank,LLM prioritisation,Qwen3.5-9B,18.0,1.6,17.8,19.7,16.6
+llm_rank,LLM prioritisation,Qwen3.5-27B,34.0,5.5,28.0,35.0,38.9
+mem0,Mem0-style update,Qwen3.5-4B,10.6,2.4,13.4,8.9,9.6
+mem0,Mem0-style update,Qwen3.5-9B,15.3,2.3,17.2,12.7,15.9
+mem0,Mem0-style update,Qwen3.5-27B,36.9,1.9,36.9,35.0,38.9
+amem,A-Mem-style links,Qwen3.5-4B,15.1,1.0,14.0,15.3,15.9
+amem,A-Mem-style links,Qwen3.5-9B,18.9,2.0,19.7,16.6,20.4
+amem,A-Mem-style links,Qwen3.5-27B,37.6,1.3,37.6,36.3,38.9

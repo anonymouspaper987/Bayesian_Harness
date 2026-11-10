@@ -313,12 +313,19 @@ def run_condition(cond, a, tasks, exam_qs):
         _cfg = FilterConfig()
         for kv in (a.cfg or []):                          # --cfg fixed_pbar=1.0 : 覆盖滤波器常数 (Table 4 质量冻结行)
             k_, v_ = kv.split("=", 1); setattr(_cfg, k_, type(getattr(_cfg, k_))(v_))
-        flt = build_filter(cond, _cfg)
+        if cond in ("llm_rank", "mem0", "amem"):          # Reviewer TvTY W1(c), see extra_baselines.py
+            from extra_baselines import EXTRA
+            flt = EXTRA[cond](_cfg)
+        else:
+            flt = build_filter(cond, _cfg)
         for k in ids:
             flt.add_factor("lib:" + notes[k]["lib"], t=0)
             flt.add_entry(k, parents=("lib:" + notes[k]["lib"],), t=0)
+    if flt is not None and hasattr(flt, "bind"):
+        flt.bind(notes, a.port, a.model, workers=a.workers)
     known_broken = set()
     ledger = []
+    prev_recs = []
     use_count = collections.Counter()
     stats = collections.Counter()
     out = open(f"{a.out_prefix}_{cond}.jsonl", "w")
@@ -365,6 +372,8 @@ def run_condition(cond, a, tasks, exam_qs):
                                 flt.update(nid, 1 if solved else 0, t=tf,
                                            msg=None if solved else "env_changed",
                                            weight=w)
+                if hasattr(flt, "observe_exams"):          # mem0: every exam of the last quarter is new information
+                    flt.observe_exams(prev_recs, tf)
             if flt is not None and cheap_set:
                 _rq = getattr(flt, "rank_quantity", None)
                 _g = {key: [0, 0.0, 0.0] for key in ("pv", "gs", "gv", "ps")}
@@ -418,6 +427,8 @@ def run_condition(cond, a, tasks, exam_qs):
                 with cf.ThreadPoolExecutor(min(a.workers, max(len(sel_r), 1))) as ex:
                     list(ex.map(do_repair, sel_r))
             else:
+                if hasattr(flt, "plan"):                   # llm_rank: ask the model once per quarter what to check
+                    flt.plan(ids, tf, use_count, a.maint_budget)
                 order = sorted(ids, key=lambda k: -flt.stale_score(k, tf)
                                * (1.0 + use_count[k]))
                 for k in order:
@@ -501,13 +512,15 @@ def run_condition(cond, a, tasks, exam_qs):
                 use_count[nid] += 1
             ledger.append((rec["solved"], rec["injected"]))
         out.flush()
+        prev_recs = recs
         for key in ("probes", "repairs", "repair_ok"):
             stats[key] += month[key]
         mf.write(json.dumps({"q": q, "qi": qi, "valid_notes": (sum(1 for k in ids if pre.get(k)) if cond != "none" else None),
                              "n_notes": len(ids),
                              **{k: month[k] for k in ("probes", "probe_valid", "repairs", "repair_ok", "breaks", "caught",
                                                       "rewrites", "rewrite_ok", "budget_spent", "release_flagged")},
-                             "grp": grp_month}) + "\n")
+                             "grp": grp_month,
+                             "flt_stats": (dict(flt.stats) if flt is not None and hasattr(flt, "stats") else None)}) + "\n")
         mf.flush()
         if todo or month["repairs"]:
             print(f"  [{cond}] {q}: {len(recs)} 题 "

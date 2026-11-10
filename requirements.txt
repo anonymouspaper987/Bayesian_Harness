@@ -7,3 +7,4 @@ openpyxl>=3.1            # only for the optional manual-review recall check
 #
 # To serve open-weight models locally (any OpenAI-compatible server works):
 # vllm>=0.9
+scikit-learn          # only for the amem baseline of rebuttal/TvTY_W1c_llm_memory_baselines

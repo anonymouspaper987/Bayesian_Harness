@@ -1,0 +1,10 @@
+policy,model,probes,probes_on_valid_notes,repairs,repairs_ok,llm_calls,llm_errors
+llm_rank,Qwen3.5-4B,333,225,105,100,27,0
+llm_rank,Qwen3.5-9B,291,168,119,110,27,0
+llm_rank,Qwen3.5-27B,306,186,114,109,27,0
+mem0,Qwen3.5-4B,157,16,139,136,392,0
+mem0,Qwen3.5-9B,160,27,125,121,392,0
+mem0,Qwen3.5-27B,147,9,133,131,392,0
+amem,Qwen3.5-4B,234,113,114,108,0,0
+amem,Qwen3.5-9B,228,110,116,110,0,0
+amem,Qwen3.5-27B,228,103,116,112,0,0

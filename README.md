@@ -5,6 +5,7 @@
 | Point | What it shows | Folder |
 |:---|:---|:---|
 | **W1, Q1, Q2, Q3** | Release-aware baseline, sensitivity sweep and calibration | [`rebuttal/TvTY_W1_release_signal/`](rebuttal/TvTY_W1_release_signal) |
+| **W1(c)** | LLM-driven prioritisation and memory-system baselines (Mem0, A-Mem) | [`rebuttal/TvTY_W1c_llm_memory_baselines/`](rebuttal/TvTY_W1c_llm_memory_baselines) |
 | **W2, Q4, Q5, Q6** | Paired tests, the quality variable and the Oracle ceiling | [`rebuttal/TvTY_W2_paired_tests/`](rebuttal/TvTY_W2_paired_tests) |
 
 ---
@@ -14,6 +15,12 @@
 <p align="center"><a href="rebuttal/TvTY_W1_release_signal"><img src="rebuttal/TvTY_W1_release_signal/w1_release_signal.gif" alt="Release-aware baseline, sensitivity sweep and calibration" width="760"></a></p>
 
 <p align="center"><a href="rebuttal/TvTY_W1_release_signal"><strong>Full response, results, logs and reproduction &rarr;</strong></a></p>
+
+### W1(c): LLM-driven prioritisation and memory-system baselines (Mem0, A-Mem)
+
+<p align="center"><a href="rebuttal/TvTY_W1c_llm_memory_baselines"><img src="rebuttal/TvTY_W1c_llm_memory_baselines/w1c_baselines.png" alt="LLM-driven prioritisation and memory-system baselines" width="760"></a></p>
+
+<p align="center"><a href="rebuttal/TvTY_W1c_llm_memory_baselines"><strong>Full response, results, logs and reproduction &rarr;</strong></a></p>
 
 ### W2, Q4, Q5, Q6: Paired tests, the quality variable and the Oracle ceiling
 
