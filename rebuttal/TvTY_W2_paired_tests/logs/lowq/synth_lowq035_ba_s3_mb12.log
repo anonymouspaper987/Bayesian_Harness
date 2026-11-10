@@ -1,0 +1,42 @@
+模型后端: vllm Qwen/Qwen3.5-27B
+acmesdk 世界 seed3: 414 张笔记, 330 次考试 / 36 个月, 条件 ['bayesian_agent'], 维护 12/月
+低质量笔记设定: 145/414 张笔记考试时只显示名字 (--lowq-frac 0.35)
+== bayesian_agent
+  [bayesian_agent] M02: 3 题 0 解出, 有效笔记 412/414, probes 12 repairs 0(ok 0), 0s
+  [bayesian_agent] M03: 5 题 0 解出, 有效笔记 410/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M04: 5 题 0 解出, 有效笔记 410/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M05: 7 题 0 解出, 有效笔记 409/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M06: 10 题 0 解出, 有效笔记 405/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M07: 10 题 0 解出, 有效笔记 402/414, probes 3 repairs 3(ok 0), 0s
+  [bayesian_agent] M08: 10 题 0 解出, 有效笔记 382/414, probes 3 repairs 3(ok 0), 0s
+  [bayesian_agent] M09: 10 题 0 解出, 有效笔记 382/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M10: 10 题 0 解出, 有效笔记 380/414, probes 6 repairs 2(ok 0), 1s
+  [bayesian_agent] M11: 10 题 0 解出, 有效笔记 378/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M12: 10 题 0 解出, 有效笔记 374/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M13: 10 题 0 解出, 有效笔记 307/414, probes 6 repairs 2(ok 0), 1s
+  [bayesian_agent] M14: 10 题 0 解出, 有效笔记 288/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M15: 10 题 0 解出, 有效笔记 285/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M16: 10 题 0 解出, 有效笔记 282/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M17: 10 题 0 解出, 有效笔记 279/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M18: 10 题 0 解出, 有效笔记 276/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M19: 10 题 0 解出, 有效笔记 264/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M20: 10 题 0 解出, 有效笔记 261/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M21: 10 题 0 解出, 有效笔记 261/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M22: 10 题 0 解出, 有效笔记 259/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M23: 10 题 0 解出, 有效笔记 258/414, probes 3 repairs 3(ok 0), 1s
+  [bayesian_agent] M24: 10 题 0 解出, 有效笔记 257/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M25: 10 题 0 解出, 有效笔记 255/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M26: 10 题 0 解出, 有效笔记 237/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M27: 10 题 0 解出, 有效笔记 236/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M28: 10 题 0 解出, 有效笔记 226/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M29: 10 题 0 解出, 有效笔记 223/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M30: 10 题 0 解出, 有效笔记 223/414, probes 3 repairs 3(ok 0), 0s
+  [bayesian_agent] M31: 10 题 0 解出, 有效笔记 214/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M32: 10 题 0 解出, 有效笔记 212/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M33: 10 题 0 解出, 有效笔记 210/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M34: 10 题 0 解出, 有效笔记 197/414, probes 9 repairs 1(ok 0), 0s
+  [bayesian_agent] M35: 10 题 0 解出, 有效笔记 196/414, probes 6 repairs 2(ok 0), 0s
+  [bayesian_agent] M36: 10 题 0 解出, 有效笔记 196/414, probes 9 repairs 1(ok 0), 0s
+
+条件               solved  probes  repairs rep_ok
+bayesian_agent     0.0%     249       57      0
