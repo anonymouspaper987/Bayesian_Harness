@@ -4,7 +4,7 @@ import matplotlib
 from matplotlib import font_manager
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-for f in glob.glob(os.path.join(HERE, "fonts", "*.ttf")):     # optional: LiberationSerif-*.ttf (Times metrics)
+for f in glob.glob(os.path.join(HERE, "fonts", "*.[tT][tT][fF]")):     # optional: LiberationSerif-*.ttf (Times metrics)
     font_manager.fontManager.addfont(f)
 matplotlib.rcParams.update({"font.family": "serif",
                             "font.serif": ["Times New Roman", "Liberation Serif", "STIXGeneral", "DejaVu Serif"],

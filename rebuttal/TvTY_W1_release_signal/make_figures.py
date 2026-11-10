@@ -67,27 +67,27 @@ with open(f"{HERE}/release_flagged.csv", "w", newline="") as f:
 
 # ---- GIF: the release-aware baseline next to the paper's rows ---------------------------------
 ORDER = [("Bayesian-Agent", GRAY1, ""), ("TTL", GRAY2, ""), ("Bayesian-Harness (ours)", NAVY, ""),
-         ("Oracle release-aware (new)", BRICK, "//"), ("Oracle (paper)", "#d9d9d9", "..")]
+         ("Release-aware oracle (new)", BRICK, "//"), ("Oracle (paper)", "#cfcfcf", "")]
 GROW, HOLD, W = 22, 30, 0.16
-fig, axes = plt.subplots(1, 2, figsize=(13, 5.6), facecolor="white")
-fig.subplots_adjust(left=0.06, right=0.99, top=0.80, bottom=0.09, wspace=0.12)
+fig, axes = plt.subplots(1, 2, figsize=(13, 6.2), facecolor="white")
+fig.subplots_adjust(left=0.065, right=0.99, top=0.755, bottom=0.08, wspace=0.14)
 ease = lambda x: 1 - (1 - max(0.0, min(1.0, x))) ** 3
 
 
 def values(corpus, key):
-    if key.startswith("Oracle release"):
+    if key.startswith("Release-aware"):
         return [NEW[corpus][t] for t, _ in MODELS]
     return PAPER[corpus][key.replace(" (paper)", "")]
 
 
 def draw(i):
     f = ease(i / GROW)
-    for ax, (corpus, title, ymax) in zip(axes, (("maskedmig", "MaskedMig, budget 24 (real API migrations)", 62),
-                                                ("acmesdk", "AcmeSDK, budget 24 (synthetic SDK)", 95))):
+    for ax, (corpus, title, ymax) in zip(axes, (("maskedmig", "MaskedMig (real API migrations), budget 24", 62),
+                                                ("acmesdk", "AcmeSDK (synthetic SDK), budget 24", 95))):
         ax.clear(); ax.set_ylim(0, ymax); ax.set_xlim(-0.5, 2.5)
-        ax.set_xticks(range(3), [m for _, m in MODELS], fontsize=14); ax.tick_params(axis="y", labelsize=12)
+        ax.set_xticks(range(3), [m for _, m in MODELS], fontsize=16); ax.tick_params(axis="y", labelsize=14)
         ax.yaxis.grid(True, color="#e5e5e5", lw=0.7); ax.set_axisbelow(True)
-        ax.set_title(title, fontsize=14, pad=8)
+        ax.set_title(title, fontsize=16, pad=10)
         for k, (key, col, hatch) in enumerate(ORDER):
             xs = [j + (k - 2) * W for j in range(3)]
             mu = [v[0] for v in values(corpus, key)]; sd = [v[1] for v in values(corpus, key)]
@@ -96,14 +96,15 @@ def draw(i):
             if f >= 0.999:
                 ax.errorbar(xs, mu, yerr=sd, fmt="none", ecolor="#222222", elinewidth=1.0, capsize=3)
                 for x, m in zip(xs, mu):
-                    if key.startswith("Oracle release") or key.startswith("Bayesian-Harness"):
-                        ax.text(x, m + (sd[xs.index(x)] if sd else 0) + 1.2, f"{m:.1f}", ha="center", fontsize=10,
-                                color=col if key.startswith("Oracle release") else NAVY, fontweight="bold")
-    axes[0].set_ylabel("Exam success (%), mean $\\pm$ s.d. over 3 seeds", fontsize=13)
-    axes[0].legend(loc="upper left", ncol=5, frameon=False, fontsize=12, bbox_to_anchor=(-0.02, 1.26),
-                   handlelength=1.3, columnspacing=1.1)
-    fig.suptitle("Bayesian-Harness (no release signal) next to oracles that read the version / changelog signal for free",
-                 fontsize=15, y=0.985)
+                    if key.startswith("Release-aware") or key.startswith("Bayesian-Harness"):
+                        ax.text(x, m + (sd[xs.index(x)] if sd else 0) + 1.2, f"{m:.1f}", ha="center", fontsize=11.5,
+                                color=col, fontweight="bold")
+    axes[0].set_ylabel("Exam success (%)", fontsize=16)
+    fig.legends.clear()
+    fig.legend(*axes[0].get_legend_handles_labels(), loc="upper center", ncol=5, frameon=False, fontsize=14,
+               bbox_to_anchor=(0.5, 0.915), handlelength=1.4, columnspacing=1.6)
+    fig.suptitle("Bayesian-Harness without any release signal vs. oracles that read it for free (mean $\\pm$ s.d., 3 seeds)",
+                 fontsize=17, y=0.975)
     return []
 
 

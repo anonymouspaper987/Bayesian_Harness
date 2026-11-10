@@ -153,34 +153,38 @@ try:
 except ImportError:
     print("matplotlib / pillow not available, GIF skipped"); sys.exit(0)
 
-if len(CORPORA) < 2:
-    print("GIF needs both corpora; the committed w2_paired_tests.gif was drawn from the full tables"); sys.exit(0)
+if len(CORPORA) < 2:   # only AcmeSDK result files here: draw from the full pooled table committed next to this script
+    pooled = list(csv.reader(open(f"{HERE}/paired_pooled.csv", encoding="utf-8")))
 GROW, HOLD, W = 20, 32, 0.19
-fig, axes = plt.subplots(1, 2, figsize=(13, 5.6), facecolor="white", gridspec_kw={"width_ratios": [1, 1]})
-fig.subplots_adjust(left=0.065, right=0.99, top=0.80, bottom=0.12, wspace=0.14)
+fig, axes = plt.subplots(1, 2, figsize=(13, 6.2), facecolor="white", gridspec_kw={"width_ratios": [1, 1]})
+fig.subplots_adjust(left=0.075, right=0.99, top=0.755, bottom=0.09, wspace=0.16)
 ease = lambda x: 1 - (1 - max(0.0, min(1.0, x))) ** 3
 POOL = {(r[0], r[1]): (int(r[2]), int(r[3]), float(r[4])) for r in pooled[1:]}
 
 
 def draw(i):
     f = ease(i / GROW)
-    for ax, name, ymax in ((axes[0], "AcmeSDK", 560), (axes[1], "MaskedMig", 145)):
+    for ax, name, ymax in ((axes[0], "AcmeSDK", 600), (axes[1], "MaskedMig", 155)):
         ax.clear(); ax.set_ylim(0, ymax); ax.set_xlim(-0.6, len(BASES) - 0.4)
-        ax.set_xticks(range(len(BASES)), [f"vs {b}" for _, b in BASES], fontsize=13)
-        ax.tick_params(axis="y", labelsize=12); ax.yaxis.grid(True, color="#e5e5e5", lw=0.7); ax.set_axisbelow(True)
-        ax.set_title(f"{name}, budget 24, three seeds and three model sizes pooled", fontsize=13.5, pad=8)
+        ax.set_xticks(range(len(BASES)), [f"vs. {b}" for _, b in BASES], fontsize=16)
+        ax.tick_params(axis="y", labelsize=14); ax.yaxis.grid(True, color="#e5e5e5", lw=0.7); ax.set_axisbelow(True)
+        ax.set_title(f"{name}, budget 24", fontsize=16, pad=10)
         for g, (_, b) in enumerate(BASES):
             Wn, Ln, p = POOL[name, b]
             ax.bar(g - W / 2 - 0.01, Wn * f, W, color=NAVY, label="exams only Bayesian-Harness passes" if g == 0 else None)
             ax.bar(g + W / 2 + 0.01, Ln * f, W, color=GRAY2, label="exams only the baseline passes" if g == 0 else None)
             if f >= 0.999:
-                ax.text(g - W / 2 - 0.01, Wn + ymax * 0.012, str(Wn), ha="center", fontsize=12, color=NAVY, fontweight="bold")
-                ax.text(g + W / 2 + 0.01, Ln + ymax * 0.012, str(Ln), ha="center", fontsize=12, color=MUTE)
-                ax.text(g, max(Wn, Ln) + ymax * 0.075, fmt_p(p), ha="center", fontsize=12, color=BRICK, fontweight="bold")
-    axes[0].set_ylabel("Discordant exams (count)", fontsize=13)
-    axes[0].legend(loc="upper left", ncol=2, frameon=False, fontsize=12, bbox_to_anchor=(-0.02, 1.22))
-    fig.suptitle("Paired McNemar tests: Bayesian-Harness vs. TTL and Bayesian-Agent, exact two-sided p",
-                 fontsize=14.5, y=0.985)
+                ax.text(g - W / 2 - 0.01, Wn + ymax * 0.012, str(Wn), ha="center", fontsize=13, color=NAVY, fontweight="bold")
+                ax.text(g + W / 2 + 0.01, Ln + ymax * 0.012, str(Ln), ha="center", fontsize=13, color=MUTE)
+                top = max(Wn, Ln) + ymax * 0.08
+                x0, x1 = g - W / 2 - 0.01, g + W / 2 + 0.01
+                ax.plot([x0, x0, x1, x1], [top - ymax * 0.02, top, top, top - ymax * 0.02], color=INK, lw=1.0)
+                ax.text(g, top + ymax * 0.015, fmt_p(p), ha="center", fontsize=13.5, color=BRICK, fontweight="bold")
+    axes[0].set_ylabel("Discordant exams (count)", fontsize=16)
+    fig.legends.clear()
+    fig.legend(*axes[0].get_legend_handles_labels(), loc="upper center", ncol=2, frameon=False, fontsize=14,
+               bbox_to_anchor=(0.5, 0.915), handlelength=1.4, columnspacing=2.0)
+    fig.suptitle("Paired McNemar tests, 3 seeds and 3 model sizes pooled (exact two-sided p)", fontsize=17, y=0.975)
     return []
 
 
