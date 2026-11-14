@@ -46,7 +46,7 @@ We also ran the two policies the reviewer describes, as oracles: they read the r
 | **AcmeSDK** · Oracle, reads every release note after selection (paper) | 40.2 ± 1.7 | 54.5 ± 7.5 | 78.1 ± 3.2 |
 | **AcmeSDK** · TTL (paper) | 36.2 ± 2.7 | 51.2 ± 4.0 | 62.9 ± 4.4 |
 
-Without any release signal, **Bayesian-Harness** matches the version-bump oracle on MaskedMig at every model size. On AcmeSDK the changelog oracle sits above, as expected for an oracle that reads every release note. Our method is for the case where the notes are absent. When a release signal exists it can be added as evidence on the library's shared factor, so the two are complementary. We will add this comparison and this discussion to the paper.
+Without any release signal, **Bayesian-Harness** is close to the version-bump oracle on MaskedMig, which reads the version signal for free. The oracle rows are run on our rebuttal stack and the ours rows are the values printed in the paper, so the gaps are indicative. On AcmeSDK the changelog oracle sits above, as expected for an oracle that reads every release note. Our method is for the case where the notes are absent. When a release signal exists it can be added as evidence on the library's shared factor, so the two are complementary. We will add this comparison and this discussion to the paper.
 
 <p align="center"><img src="w1_release_signal.gif" alt="Release-aware baseline next to the paper's main-table rows" width="960"></p>
 
@@ -131,7 +131,7 @@ Every setting stays above Bayesian-Agent. The stress tests of the paper also inc
 | Sibling propagation rule, `FactorRuleFilter` (new) | 14.9 ± 2.0 | 20.0 ± 2.0 | 39.3 ± 2.9 | [`reviewer_5Xuf/W1_FactorRuleFilter`](https://github.com/anonymouspaper987/Bayesian_Harness/tree/reviewer_5Xuf/rebuttal/W1_FactorRuleFilter) |
 | **Bayesian-Harness (ours, paper)** | **25.5 ± 1.7** | **29.9 ± 2.2** | **48.4 ± 2.8** | `main` |
 
-Both perform like TTL and stay 9 to 10 points below our method at every model size. We will add both rows to the main tables.
+Both perform like TTL and stay below our method at every model size. The new rows are run on our rebuttal stack and the ours row is the value printed in Table 1, so the gaps are indicative. We will add both rows to the main tables.
 
 ---
 
