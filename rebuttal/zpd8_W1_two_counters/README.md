@@ -37,7 +37,7 @@
 | Two counters (new) | `16.3 ± 1.6` | `20.4 ± 2.3` | `38.0 ± 3.3` |
 | **Bayesian-Harness (ours, paper)** | **25.5 ± 1.7** | **29.9 ± 2.2** | **48.4 ± 2.8** |
 
-Two counters performs close to TTL and stays 9 to 10 points below our method at every model size.
+Two counters performs close to TTL and stays below our method at every model size. The new rows are run on our rebuttal stack and the ours row is the value printed in Table 1, so the gaps are indicative.
 
 On ResiliBench: it looks at random failures; we look at lasting changes. We make the environment deterministic. The probe runs the note's code against the library version of that period, so a failed probe always means a persistent API change, and we update the posterior of Validity. In our setting the randomness comes from the agent, and we model it with Quality. Our method splits the cause of a failure into these two factors: Validity asks whether the API has changed, Quality asks whether the note itself is good. Random execution failures are not part of our setting.
 
