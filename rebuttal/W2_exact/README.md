@@ -9,7 +9,7 @@
 </p>
 
 > [!NOTE]
-> **Material for Reviewer 5Xuf, weakness 2 and question 2.** It adds the exact period-by-period staleness update of Eq. 8
+> **Material for Reviewer 5Xuf, weakness 2 and question 2.** It adds the exact period-by-period staleness update of Eq. 7
 > next to the first-order approximation that produced the paper's numbers, behind one configuration switch, plus the run
 > script of the comparison. Code only; the comparison numbers below are quoted from the rebuttal.
 
@@ -17,7 +17,7 @@
 
 | Reviewer's point | What this folder adds | Jump to |
 |:---|:---|:---|
-| **W2** `_touch_entry` multiplies the one-period hazard by the number of elapsed periods instead of composing it | `FilterConfig.compose_per_period = 1` applies Eq. 8 once per period with the regime belief of Eq. 7 at each step | [Code change](#what-changed-in-the-code) |
+| **W2** `_touch_entry` multiplies the one-period hazard by the number of elapsed periods instead of composing it | `FilterConfig.compose_per_period = 1` applies Eq. 7 once per period with the regime belief of Eq. 5 at each step | [Code change](#what-changed-in-the-code) |
 | **Q2** is this intentional, and how much does it change the results | a 5-seed MaskedMig comparison of both forms under the main-table protocol | [Response](#the-concern) |
 
 ---
@@ -41,7 +41,7 @@
 
 2. **We checked where the approximation matters.** On AcmeSDK the filter is updated every month, so each update is exactly one period and the two forms coincide. The approximation only affects MaskedMig, where each update spans one quarter (three months).
 
-3. **We will revise the manuscript.** Eq. 8 and Appendix A.1 will describe the approximation actually used, and the comparison goes to the appendix.
+3. **We will revise the manuscript.** Eq. 7 and Appendix A.1 will describe the approximation actually used, and the comparison goes to the appendix.
 
 4. **We release both versions.** This folder contains them, behind `compose_per_period`.
 
@@ -51,7 +51,7 @@
 
 | File | Change |
 |:---|:---|
-| [`bayesian_harness/filters.py`](../../bayesian_harness/filters.py) | New `FilterConfig.compose_per_period` (default `0` = approximation, paper numbers). With `1`, `_touch_entry` calls `_compose_entry`, which applies Eq. 8 once per period with the regime belief `b(τ)` from Eq. 7 (`_b_at`). |
+| [`bayesian_harness/filters.py`](../../bayesian_harness/filters.py) | New `FilterConfig.compose_per_period` (default `0` = approximation, paper numbers). With `1`, `_touch_entry` calls `_compose_entry`, which applies Eq. 7 once per period with the regime belief `b(τ)` from Eq. 5 (`_b_at`). |
 | [`scripts/run_maskedmig_w2_exact.sh`](../../scripts/run_maskedmig_w2_exact.sh) | Runs both versions on MaskedMig (budget 24, `--t-scale 3`, 5 seeds). |
 | [`rebuttal/W2_exact/make_gif.py`](make_gif.py) | Draws the GIF above. |
 
@@ -63,7 +63,7 @@
 h = eps * dt + sum(w_f * rho_f * dt * b_f(t) for f in parents)
 s = s + (1 - s) * min(1, h)
 
-# exact form (compose_per_period = 1): Eq. 8 once per period, belief advanced by Eq. 7 at each step
+# exact form (compose_per_period = 1): Eq. 7 once per period, belief advanced by Eq. 5 at each step
 for tau in (t_last + 1, ..., t):
     h = eps + sum(w_f * rho_f * b_f(tau) for f in parents)
     s = s + (1 - s) * h

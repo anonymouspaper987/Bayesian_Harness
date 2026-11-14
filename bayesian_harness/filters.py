@@ -59,7 +59,7 @@ class FilterConfig:
     thompson: bool = False          # Thompson sampling of factor states (user 2026-09-06: off, hurt slightly offline)
     learn_rho: bool = False         # 每个因子在线学 "大改时兄弟笔记被波及的比例" (Beta(2,2) 先验, 均值 0.5)
     live_share: bool = False        # 当期实时重算共享嫌疑 (论文数字为 False)
-    compose_per_period: int = 0     # 1 = Eq. 8 逐期复合 (dt>1 时每期推进因子信念再复合); 0 = 一阶形式 dt*(bg+rho*b(t)) (论文数字)
+    compose_per_period: int = 0     # 1 = Eq. 7 逐期复合 (dt>1 时每期推进因子信念再复合); 0 = 一阶形式 dt*(bg+rho*b(t)) (论文数字)
     # decision thresholds shared with policies
     flag_threshold: float = 0.5     # staleness score above this = downgraded
     repair_threshold: float = 0.9   # own s_k above this = trigger rewrite
@@ -921,13 +921,13 @@ class HierarchicalHMMFilter(BaseFilter):
             if self.cfg.compose_per_period and dt > 1.0 + 1e-9:
                 self._compose_entry(e, t, dt)
                 return e
-            # First-order approximation of Eq. 8 over a gap of dt periods (used for all paper numbers).
-            #   Exact (Eq. 8, applied once per period tau = 1..dt, regime belief advanced each period):
+            # First-order approximation of Eq. 7 over a gap of dt periods (used for all paper numbers).
+            #   Exact (Eq. 7, applied once per period tau = 1..dt, regime belief advanced each period):
             #       s <- s + (1 - s) * (eps + rho * b(tau))          repeated dt times
             #   Here (one step, belief taken at the END of the gap, b(t)):
             #       s <- s + (1 - s) * min(1, dt * (eps + rho * b(t)))
             #   i.e. the one-period break probability is multiplied by dt instead of compounded.
-            #   dt = 1 (AcmeSDK, monthly): identical to Eq. 8.  dt = 3 (MaskedMig, quarterly): approximate.
+            #   dt = 1 (AcmeSDK, monthly): identical to Eq. 7.  dt = 3 (MaskedMig, quarterly): approximate.
             #   compose_per_period=1 switches to the exact form (_compose_entry).
             h = self.cfg.hmm_bg * dt                                   # eps * dt
             for f in e["parents"]:
@@ -941,7 +941,7 @@ class HierarchicalHMMFilter(BaseFilter):
         return e
 
     def _b_at(self, f, tau):
-        """因子 f 在时刻 tau 的信念 (tau 落在它最后一段传播区间里时按 Eq. 7 回推; 更早的时刻用该段起点)."""
+        """因子 f 在时刻 tau 的信念 (tau 落在它最后一段传播区间里时按 Eq. 5 回推; 更早的时刻用该段起点)."""
         fa = self.factors[f]
         t0 = fa.get("t_from")
         if t0 is None or tau >= fa["t_last"]:
@@ -953,7 +953,7 @@ class HierarchicalHMMFilter(BaseFilter):
         return _clamp(pi + (fa["b_from"] - pi) * math.exp(-(lam + mu) * (tau - t0)))
 
     def _compose_entry(self, e, t, dt):
-        """Eq. 8 逐期复合: 每期 s <- s + (1-s)(bg + sum_f w rho b_f(tau)), tau = t_last+1, ..., t."""
+        """Eq. 7 逐期复合: 每期 s <- s + (1-s)(bg + sum_f w rho b_f(tau)), tau = t_last+1, ..., t."""
         for f in e["parents"]:
             self._touch_factor(f, t)
         n = max(1, int(math.ceil(dt - 1e-9)))

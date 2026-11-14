@@ -5,7 +5,7 @@
 | Point | What it shows | Folder |
 |:---|:---|:---|
 | **W1, Q1** | FactorRuleFilter, the non-Bayesian subsystem rule, under the main-table protocol | [`rebuttal/W1_FactorRuleFilter/`](rebuttal/W1_FactorRuleFilter) |
-| **W2, Q2** | The exact period-by-period update of Eq. 8 next to the first-order approximation | [`rebuttal/W2_exact/`](rebuttal/W2_exact) |
+| **W2, Q2** | The exact period-by-period update of Eq. 7 next to the first-order approximation | [`rebuttal/W2_exact/`](rebuttal/W2_exact) |
 
 ---
 
@@ -15,9 +15,9 @@
 
 <p align="center"><a href="rebuttal/W1_FactorRuleFilter"><strong>Full response, results, logs and reproduction &rarr;</strong></a></p>
 
-### W2, Q2: The exact period-by-period update of Eq. 8 next to the first-order approximation
+### W2, Q2: The exact period-by-period update of Eq. 7 next to the first-order approximation
 
-<p align="center"><a href="rebuttal/W2_exact"><img src="rebuttal/W2_exact/w2_exact.gif" alt="The exact period-by-period update of Eq. 8 next to the first-order approximation" width="760"></a></p>
+<p align="center"><a href="rebuttal/W2_exact"><img src="rebuttal/W2_exact/w2_exact.gif" alt="The exact period-by-period update of Eq. 7 next to the first-order approximation" width="760"></a></p>
 
 <p align="center"><a href="rebuttal/W2_exact"><strong>Full response, results, logs and reproduction &rarr;</strong></a></p>
 

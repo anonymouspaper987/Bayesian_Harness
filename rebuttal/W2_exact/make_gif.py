@@ -1,4 +1,4 @@
-"""Reviewer 5Xuf W2: first-order approximation vs. exact period-by-period update (Eq. 8).
+"""Reviewer 5Xuf W2: first-order approximation vs. exact period-by-period update (Eq. 7).
 
 Left: one note over one MaskedMig quarter (dt = 3 months), default FilterConfig values
 (eps = hmm_bg = 0.012, rho = hmm_rho = 0.5, mu = hmm_recover = 1, lambda = hazard_factor = 1e-3),
@@ -15,21 +15,21 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 HERE = os.path.dirname(os.path.abspath(__file__))
 EPS, RHO, MU, LAM, B0, DT = 0.012, 0.5, 1.0, 1e-3, 0.5, 3
 PI = LAM / (LAM + MU)
-b = lambda t: PI + (B0 - PI) * math.exp(-(LAM + MU) * t)          # Eq. 7
+b = lambda t: PI + (B0 - PI) * math.exp(-(LAM + MU) * t)          # Eq. 5
 
-exact = [0.0]                                                     # Eq. 8, once per month
+exact = [0.0]                                                     # Eq. 7, once per month
 for tau in range(1, DT + 1):
     s = exact[-1]
     exact.append(s + (1 - s) * min(1.0, EPS + RHO * b(tau)))
 approx = min(1.0, DT * (EPS + RHO * b(DT)))                       # one step, belief at the end
 ACC = [("First-order approximation\n(used in the paper)", 48.5, 2.2, "#ea580c"),
-       ("Exact period-by-period\nupdate (Eq. 8)", 46.9, 4.0, "#2563eb")]
+       ("Exact period-by-period\nupdate (Eq. 7)", 46.9, 4.0, "#2563eb")]
 
 plt.rcParams.update({"font.size": 10, "axes.spines.top": False, "axes.spines.right": False})
 fig = plt.figure(figsize=(12.5, 5))
 gs = fig.add_gridspec(2, 2, width_ratios=[1.6, 1], height_ratios=[1, 1.6])
 axb, axs, axa = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[1, 0]), fig.add_subplot(gs[:, 1])
-fig.suptitle("Updating staleness over a 3-month gap: exact (Eq. 8) vs. first-order approximation",
+fig.suptitle("Updating staleness over a 3-month gap: exact (Eq. 7) vs. first-order approximation",
              fontsize=12, fontweight="bold")
 
 ts = [i / 20 for i in range(DT * 20 + 1)]
