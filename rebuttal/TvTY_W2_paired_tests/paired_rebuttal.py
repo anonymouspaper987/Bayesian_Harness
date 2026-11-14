@@ -5,9 +5,11 @@ only exams where exactly one policy passes are informative. We count wins (ours 
 losses (baseline passes, ours fails), pool the three seeds, and report the exact two-sided binomial p-value.
 
   results/acmesdk/seed{1,2,3}/qwen{4b,9b,27b}_mb24_{ours_hhmm,ttl,bayesian_agent}.jsonl     paper runs, AcmeSDK budget 24
-  results/maskedmig/tq1_q{4b,9b,27b}_s{1,2,3}_mb24_{ours_hhmm,ttl,bayesian_agent}.jsonl      MaskedMig budget 24, same stack
   results/acmesdk/seed{1,2,3}/qwen27b_mb24_ours_hhmm_no_{recover,error_channel}.jsonl         ablations (paper runs)
   results/acmesdk/seed{1,2,3}/qwen27b_mb12_lowq035_*.jsonl                                   low-quality-notes world (W2(a) / Q6)
+
+MaskedMig (Table 1) is reported as the worst case implied by the printed accuracies of Table 1: the largest
+number of discordant exams consistent with them, so the true p-value can only be smaller.
 
 Writes paired_pooled.csv (three seeds and three model sizes pooled), ablation_paired.csv, lowq_summary.csv and w2_paired_tests.gif.
 The renamed-drift subset needs the world truth files ($ACMESDK_DATA/seed*/truth); without them that
@@ -72,35 +74,28 @@ def acme(tag, mb, cond):
     return {s: f"{RES}/acmesdk/seed{s}/qwen{tag}_mb{mb}_{cond}.jsonl" for s in (1, 2, 3)}
 
 
-def mig(tag, cond):
-    return {s: f"{RES}/maskedmig/tq1_q{tag}_s{s}_mb24_{cond}.jsonl" for s in (1, 2, 3)}
-
-
-# ---- per-cell paired tests (Table 1 = MaskedMig, Table 6 = AcmeSDK, budget 24) ------------------
-# The MaskedMig cells need the per-migration files of the same-stack rerun of the three policies.
-# This branch ships the AcmeSDK files; the MaskedMig counts are kept in paired_cells.csv as computed.
-CORPORA = [("acme", "AcmeSDK")]
-if all(os.path.exists(p) for c in ("ours_hhmm", "ttl", "bayesian_agent") for t, _ in MODELS for p in mig(t, c).values()):
-    CORPORA.append(("mig", "MaskedMig"))
-else:
-    print("MaskedMig per-migration files not present: computing the AcmeSDK cells only")
+# ---- AcmeSDK (Table 6, budget 24): per-exam paired tests from the paper runs --------------------
 cells = {}
-rows = [["corpus", "model", "baseline", "wins", "losses", "p_two_sided", "per_seed_wins_losses"]]
-for corpus, name in CORPORA:
-    for tag, mname in MODELS:
-        for b, bname in BASES:
-            fa = acme(tag, 24, "ours_hhmm") if corpus == "acme" else mig(tag, "ours_hhmm")
-            fb = acme(tag, 24, b) if corpus == "acme" else mig(tag, b)
-            W, L, p, per = compare(fa, fb, corpus)
-            cells[name, mname, bname] = (W, L, p)
-            rows.append([name, mname, bname, W, L, f"{p:.4g}", " ".join(f"s{s}:{w}/{l}" for s, w, l in per)])
-OUT_SUFFIX = "" if len(CORPORA) == 2 else "_acmesdk"      # never overwrite the full table with a partial recomputation
-pooled = [["corpus", "baseline", "wins", "losses", "p_two_sided"]]
-for name in [n for _, n in CORPORA]:
-    for _, bname in BASES:
-        W = sum(cells[name, m, bname][0] for _, m in MODELS); L = sum(cells[name, m, bname][1] for _, m in MODELS)
-        pooled.append([name, bname, W, L, f"{binom_two_sided(W, W + L):.3g}"])
-with open(f"{HERE}/paired_pooled{OUT_SUFFIX}.csv", "w", newline="") as f:
+for tag, mname in MODELS:
+    for b, bname in BASES:
+        W, L, p, per = compare(acme(tag, 24, "ours_hhmm"), acme(tag, 24, b), "acme")
+        cells[mname, bname] = (W, L, p)
+pooled = [["corpus", "baseline", "wins", "losses", "p_two_sided", "basis"]]
+for _, bname in BASES:
+    W = sum(cells[m, bname][0] for _, m in MODELS); L = sum(cells[m, bname][1] for _, m in MODELS)
+    pooled.append(["AcmeSDK", bname, W, L, f"{binom_two_sided(W, W + L):.3g}", "per-exam counts, Table 6 runs"])
+
+# ---- MaskedMig (Table 1, budget 24): worst case implied by the printed accuracies -----------------
+# 157 migrations x 3 seeds = 471 exams per model. A discordant exam is one that exactly one policy passes,
+# so their number is at most (passes of ours) + (passes of the baseline). With the net wins fixed by the
+# accuracies, more discordant exams only raise the p-value, so this maximum gives an upper bound on p.
+TABLE1 = {"ours": (25.5, 29.9, 48.4), "TTL": (17.8, 22.9, 40.1), "Bayesian-Agent": (14.0, 18.5, 36.3)}
+N_MIG = 471
+passes = lambda accs: sum(round(a / 100 * N_MIG) for a in accs)
+for _, bname in BASES:
+    W, L = passes(TABLE1["ours"]), passes(TABLE1[bname])
+    pooled.append(["MaskedMig", bname, W, L, f"{binom_two_sided(W, W + L):.3g}", "worst case implied by Table 1 accuracies"])
+with open(f"{HERE}/paired_pooled.csv", "w", newline="") as f:
     csv.writer(f).writerows(pooled)
 
 # ---- ablations (Qwen3.5-27B, budget 24) ----------------------------------------------------------
@@ -137,7 +132,7 @@ for cond, label in LQ:
 with open(f"{HERE}/lowq_summary.csv", "w", newline="") as f:
     csv.writer(f).writerows(lowq)
 
-for name, out in ((f"paired_pooled{OUT_SUFFIX}.csv", pooled), ("ablation_paired.csv", abl), ("lowq_summary.csv", lowq)):
+for name, out in (("paired_pooled.csv", pooled), ("ablation_paired.csv", abl), ("lowq_summary.csv", lowq)):
     print(f"== {name}")
     for r in out:
         print(",".join(map(str, r)))
@@ -153,8 +148,6 @@ try:
 except ImportError:
     print("matplotlib / pillow not available, GIF skipped"); sys.exit(0)
 
-if len(CORPORA) < 2:   # only AcmeSDK result files here: draw from the full pooled table committed next to this script
-    pooled = list(csv.reader(open(f"{HERE}/paired_pooled.csv", encoding="utf-8")))
 GROW, HOLD, W = 20, 32, 0.19
 fig, axes = plt.subplots(1, 2, figsize=(13, 6.2), facecolor="white", gridspec_kw={"width_ratios": [1, 1]})
 fig.subplots_adjust(left=0.075, right=0.99, top=0.755, bottom=0.09, wspace=0.16)
@@ -164,11 +157,11 @@ POOL = {(r[0], r[1]): (int(r[2]), int(r[3]), float(r[4])) for r in pooled[1:]}
 
 def draw(i):
     f = ease(i / GROW)
-    for ax, name, ymax in ((axes[0], "AcmeSDK", 600), (axes[1], "MaskedMig", 155)):
+    for ax, name, ymax in ((axes[0], "AcmeSDK", 600), (axes[1], "MaskedMig", 600)):
         ax.clear(); ax.set_ylim(0, ymax); ax.set_xlim(-0.6, len(BASES) - 0.4)
         ax.set_xticks(range(len(BASES)), [f"vs. {b}" for _, b in BASES], fontsize=16)
         ax.tick_params(axis="y", labelsize=14); ax.yaxis.grid(True, color="#e5e5e5", lw=0.7); ax.set_axisbelow(True)
-        ax.set_title(f"{name}, budget 24", fontsize=16, pad=10)
+        ax.set_title(f"{name}, budget 24" + (" (worst case from Table 1)" if name == "MaskedMig" else ""), fontsize=16, pad=10)
         for g, (_, b) in enumerate(BASES):
             Wn, Ln, p = POOL[name, b]
             ax.bar(g - W / 2 - 0.01, Wn * f, W, color=NAVY, label="exams only Bayesian-Harness passes" if g == 0 else None)

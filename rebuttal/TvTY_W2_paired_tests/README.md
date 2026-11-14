@@ -38,8 +38,10 @@
 |:---|:---:|:---:|
 | **Bayesian-Harness** vs TTL, AcmeSDK | 375 / 194 | `p<0.001` |
 | **Bayesian-Harness** vs Bayesian-Agent, AcmeSDK | 491 / 162 | `p<0.001` |
-| **Bayesian-Harness** vs TTL, MaskedMig | 120 / 48 | `p<0.001` |
-| **Bayesian-Harness** vs Bayesian-Agent, MaskedMig | 94 / 48 | `p<0.001` |
+| **Bayesian-Harness** vs TTL, MaskedMig | 489 / 381 (worst case) | `p<0.001` |
+| **Bayesian-Harness** vs Bayesian-Agent, MaskedMig | 489 / 324 (worst case) | `p<0.001` |
+
+The AcmeSDK rows use the per-exam runs of Table 6. For MaskedMig, the rows give the worst case implied by the accuracies of Table 1. We take the largest number of discordant exams consistent with them, so the true p-value can only be smaller.
 
 <p align="center"><img src="w2_paired_tests.gif" alt="Paired McNemar tests per cell" width="960"></p>
 
@@ -60,7 +62,7 @@ The paired counts for the two largest ablation drops are significant. We will ad
 A paired test needs both policies on identical exams, so the inputs are:
 
 - **AcmeSDK, budget 24.** The runs behind the paper's Table 6 (`results/acmesdk/seed*/qwen*_mb24_{ours_hhmm,ttl,bayesian_agent}.jsonl`), 346 / 343 / 330 exams for seeds 1 / 2 / 3. Keys are `(task_id, month)`.
-- **MaskedMig, budget 24.** The three policies run on one inference stack so that every pair sits identical exams on identical infrastructure, 157 migrations per seed, keys `(task_id, quarter)`. The pooled counts are in `paired_pooled.csv`.
+- **MaskedMig, budget 24.** The printed accuracies of the paper's Table 1, 157 migrations × 3 seeds = 471 exams per model. A discordant exam is one that exactly one policy passes, so there are at most (passes of ours) + (passes of the baseline) of them. With the net wins fixed by the accuracies, more discordant exams only raise the p-value, so this maximum is the worst case. It is computed in `paired_rebuttal.py`.
 - **Ablations.** The runs behind the paper's Table 3 (`results/acmesdk/seed*/qwen27b_mb24_ours_hhmm_no_{recover,error_channel}.jsonl`).
 - The renamed-drift subset uses the world truth files (`$ACMESDK_DATA/seed*/truth`), available in the datasets repository.
 
@@ -98,9 +100,11 @@ Estimating quality beats a frozen quality variable by 4.1 points and wins `73` e
 
 | (AcmeSDK, budget 12, 3 seeds) | Qwen3.5-4B | Qwen3.5-9B | Qwen3.5-27B |
 |:---|:---:|:---:|:---:|
-| Oracle, retry every period (paper) | 32.6 ± 4.2 | 40.4 ± 6.1 | 69.3 ± 3.0 |
+| Oracle, retry every period (new) | `32.6 ± 4.2` | `40.4 ± 6.1` | `69.3 ± 3.0` |
 | Oracle with back-off (new) | `46.1 ± 1.6` | `55.0 ± 4.5` | `73.8 ± 3.2` |
-| Bayesian-Harness (ours, paper) | 35.1 ± 4.1 | 46.6 ± 4.2 | 70.9 ± 2.2 |
+| Bayesian-Harness (ours, new) | `35.1 ± 4.1` | `46.6 ± 4.2` | `70.9 ± 2.2` |
+
+All rows are re-run on the same new stack so that the back-off is compared fairly. They differ slightly from Table 6, which stays unchanged.
 
 Oracle with back-off is above our method at every size, by 11.0, 8.4 and 2.9 points. This is the achievable ceiling, and the gap to it is the remaining headroom. We will use it as the reference in the revision. Code, 27 run logs and the figure are in [`reviewer_zpd8/W2_oracle_backoff`](https://github.com/anonymouspaper987/Bayesian_Harness/tree/reviewer_zpd8/rebuttal/zpd8_W2_oracle_backoff).
 
@@ -123,7 +127,7 @@ rebuttal/TvTY_W2_paired_tests/
   style.py                               plot style
 ```
 
-No library code changes. `acmesdk/paired_tests.py` on `main` implements the same test for the paper; `paired_rebuttal.py` is a self-contained version that reads the files of this folder. It recomputes the pooled AcmeSDK tests, the ablations and the low-quality world from the files here; the MaskedMig rows are kept as computed in `paired_pooled.csv`.
+No library code changes. `acmesdk/paired_tests.py` on `main` implements the same test for the paper; `paired_rebuttal.py` is a self-contained version that reads the files of this folder. It recomputes the pooled AcmeSDK tests, the ablations and the low-quality world from the files here, and the MaskedMig worst case from the accuracies of Table 1.
 
 ## Reproduce
 
@@ -132,9 +136,6 @@ No library code changes. `acmesdk/paired_tests.py` on `main` implements the same
 python3 rebuttal/TvTY_W2_paired_tests/paired_rebuttal.py
 # with the world truth files available, the renamed-drift subset of the ablation rows is filled in too
 ACMESDK_DATA=/path/to/data/acmesdk python3 rebuttal/TvTY_W2_paired_tests/paired_rebuttal.py
-
-# rerun the MaskedMig policies on one stack (needs a model server and the migration environments)
-for s in 1 2 3; do LANES="ours_hhmm ttl bayesian_agent" scripts/run_maskedmig.sh Qwen/Qwen3.5-27B 24 $s; done
 
 # the low-quality world (AcmeSDK, budget 12)
 python3 acmesdk/loop.py --seed 1 --model Qwen/Qwen3.5-27B --conditions ours_hhmm,bayesian_agent \

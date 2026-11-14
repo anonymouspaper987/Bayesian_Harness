@@ -1,5 +1,5 @@
-corpus,baseline,wins,losses,p_two_sided
-AcmeSDK,TTL,375,194,2.74e-14
-AcmeSDK,Bayesian-Agent,491,162,2.16e-39
-MaskedMig,TTL,120,48,2.66e-08
-MaskedMig,Bayesian-Agent,94,48,0.000141
+corpus,baseline,wins,losses,p_two_sided,basis
+AcmeSDK,TTL,375,194,2.74e-14,"per-exam counts, Table 6 runs"
+AcmeSDK,Bayesian-Agent,491,162,2.16e-39,"per-exam counts, Table 6 runs"
+MaskedMig,TTL,489,381,0.000281,worst case implied by Table 1 accuracies
+MaskedMig,Bayesian-Agent,489,324,7.88e-09,worst case implied by Table 1 accuracies
